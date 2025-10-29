@@ -161,7 +161,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif', letterSpacing: '0.03em' }}
+              style={{ fontFamily: 'Kremlin, sans-serif', letterSpacing: '0.03em' }}
             >
               <span className="block mb-3">Create World Class</span>
               <span className="block">
