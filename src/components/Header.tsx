@@ -30,7 +30,7 @@ export default function Header() {
           {/* Mobile: Hamburger Menu Button (Far Left) */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors z-20"
+            className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors z-30 flex-shrink-0"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
@@ -57,7 +57,7 @@ export default function Header() {
           </div>
 
           {/* Mobile: Draftly Logo - Centered */}
-          <Link to="/" className="lg:hidden absolute left-1/2 -translate-x-1/2 group z-10">
+          <Link to="/" className="lg:hidden absolute left-1/2 -translate-x-1/2 group z-10 pointer-events-auto">
             <span className="text-xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
               Draftly
             </span>
@@ -67,9 +67,9 @@ export default function Header() {
           {user && (
             <button
               onClick={() => navigate('/profile')}
-              className="group ml-auto lg:absolute lg:right-0 z-20"
+              className="group ml-auto lg:absolute lg:right-0 z-20 flex-shrink-0"
             >
-              <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity" />
+              <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity pointer-events-none" />
               <div className="relative w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border border-white/10">
                 <UserIcon className="w-5 h-5 text-white" strokeWidth={2.5} />
               </div>
