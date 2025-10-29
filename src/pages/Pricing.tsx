@@ -1,11 +1,21 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { 
-  Check, Sparkles, Mail, ArrowRight, Layout
+  Check, Sparkles, Mail, ArrowRight, Layout, User
 } from 'lucide-react'
+import { auth } from '../firebase'
 
 export default function Pricing() {
+  const [user, setUser] = useState<any>(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser)
+    })
+    return () => unsubscribe()
+  }, [])
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Grain Texture Overlay */}
@@ -49,7 +59,7 @@ export default function Pricing() {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
         
         <div className="max-w-6xl mx-auto px-6 sm:px-8">
-          <nav className="py-5 flex items-center justify-center gap-8">
+          <nav className="py-5 flex items-center justify-center gap-8" style={{ marginLeft: '-20px' }}>
             {/* Dashboard, Contact */}
             <Link to="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Dashboard</Link>
             <Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Contact</Link>
@@ -64,6 +74,19 @@ export default function Pricing() {
             {/* Features, Pricing */}
             <a href="/#features" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Features</a>
             <Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Pricing</Link>
+            
+            {/* Profile Button */}
+            {user && (
+              <button
+                onClick={() => navigate('/profile')}
+                className="group ml-6 relative"
+              >
+                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity" />
+                <div className="relative w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border border-white/10">
+                  <User className="w-5 h-5 text-white" strokeWidth={2.5} />
+                </div>
+              </button>
+            )}
           </nav>
         </div>
       </header>
@@ -98,123 +121,181 @@ export default function Pricing() {
           </motion.div>
 
           {/* Pricing Cards */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Pro Plan */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-20">
+            {/* Starter Plan - FREE */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 backdrop-blur-sm border border-emerald-500/20 rounded-3xl p-8 sm:p-10 relative overflow-hidden"
+              transition={{ delay: 0.2 }}
+              className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-2xl p-6 relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
-              
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                    Pro
-                  </h2>
-                  <div className="px-3 py-1 bg-emerald-500/20 rounded-full">
-                    <Sparkles className="w-4 h-4 text-emerald-400" />
-                  </div>
-                </div>
-
-                <div className="mb-8">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl sm:text-6xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                      $200
+                <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                  Starter
+                </h3>
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                      $0
                     </span>
-                    <span className="text-gray-400" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>/month</span>
+                    <span className="text-gray-400 text-sm" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>/month</span>
                   </div>
-                  <p className="text-gray-400 mt-2" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                    Perfect for professionals and small teams
-                  </p>
                 </div>
-
-                <ul className="space-y-4 mb-8">
+                <ul className="space-y-3 mb-6">
                   {[
-                    'Unlimited UI generations',
-                    'Export to React, Vue, HTML',
-                    'Advanced design system',
-                    'Priority support',
-                    'Team collaboration (up to 5)',
-                    'Custom branding',
-                    'API access'
+                    '10 components/month',
+                    'Basic templates',
+                    'Community support'
                   ].map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-300" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-300 text-sm" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                         {feature}
                       </span>
                     </li>
                   ))}
                 </ul>
-
                 <Link
                   to="/contact"
-                  className="w-full px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all font-semibold text-center flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/15 transition-all font-semibold text-center text-sm flex items-center justify-center gap-2"
                   style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
                 >
                   Get Started
-                  <ArrowRight className="w-5 h-5" />
                 </Link>
               </div>
             </motion.div>
 
-            {/* Custom Plan */}
+            {/* Pro Plan - POPULAR */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-3xl p-8 sm:p-10 relative overflow-hidden"
+              transition={{ delay: 0.3 }}
+              className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 backdrop-blur-sm border-2 border-emerald-500/40 rounded-2xl p-6 relative overflow-hidden transform scale-105"
             >
+              <div className="absolute top-2 right-2 px-2 py-1 bg-emerald-500 rounded-full">
+                <span className="text-xs text-white font-bold" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>POPULAR</span>
+              </div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl" />
+              
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                    Custom
-                  </h2>
-                  <div className="px-3 py-1 bg-white/10 rounded-full">
-                    <Mail className="w-4 h-4 text-white" />
-                  </div>
-                </div>
-
-                <div className="mb-8">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl sm:text-6xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                      Custom
+                <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                  Pro
+                </h3>
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                      $49
                     </span>
+                    <span className="text-gray-400 text-sm" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>/month</span>
                   </div>
-                  <p className="text-gray-400 mt-2" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                    Tailored solutions for enterprises
-                  </p>
                 </div>
-
-                <ul className="space-y-4 mb-8">
+                <ul className="space-y-3 mb-6">
                   {[
-                    'Everything in Pro',
-                    'Unlimited team members',
-                    'Dedicated account manager',
-                    'Custom AI model training',
-                    'On-premise deployment',
-                    'SLA guarantee',
-                    '24/7 premium support',
-                    'Custom integrations'
+                    'Unlimited components',
+                    'Custom brand styles',
+                    'Priority support',
+                    'Export to Figma/Code'
                   ].map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-300" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-300 text-sm" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                         {feature}
                       </span>
                     </li>
                   ))}
                 </ul>
-
                 <Link
                   to="/contact"
-                  className="w-full px-6 py-4 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/15 transition-all font-semibold text-center flex items-center justify-center gap-2"
+                  className="w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all font-semibold text-center text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                  style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                >
+                  Get Started
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Team Plan */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-2xl p-6 relative overflow-hidden"
+            >
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                  Team
+                </h3>
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                      $199
+                    </span>
+                    <span className="text-gray-400 text-sm" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>/month</span>
+                  </div>
+                </div>
+                <ul className="space-y-3 mb-6">
+                  {[
+                    'Everything in Pro',
+                    'Team collaboration',
+                    'API access',
+                    'Custom training'
+                  ].map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-300 text-sm" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/contact"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/15 transition-all font-semibold text-center text-sm flex items-center justify-center gap-2"
+                  style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                >
+                  Get Started
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Enterprise Plan */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-2xl p-6 relative overflow-hidden"
+            >
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                  Enterprise
+                </h3>
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                      Custom
+                    </span>
+                  </div>
+                </div>
+                <ul className="space-y-3 mb-6">
+                  {[
+                    'SOC 2 compliance',
+                    'Dedicated support',
+                    'On-premise deploy'
+                  ].map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-300 text-sm" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/contact"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/15 transition-all font-semibold text-center text-sm flex items-center justify-center gap-2"
                   style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
                 >
                   Contact Us
-                  <ArrowRight className="w-5 h-5" />
                 </Link>
               </div>
             </motion.div>

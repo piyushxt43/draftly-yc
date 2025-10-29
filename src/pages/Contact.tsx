@@ -1,11 +1,21 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { 
-  Mail, Linkedin, Instagram, ArrowRight, Sparkles, Star, Heart, Zap, Layout
+  Mail, Linkedin, Instagram, ArrowRight, Sparkles, User, Zap
 } from 'lucide-react'
+import { auth } from '../firebase'
 
 export default function Contact() {
+  const [user, setUser] = useState<any>(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser)
+    })
+    return () => unsubscribe()
+  }, [])
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Grain Texture Overlay */}
@@ -98,7 +108,7 @@ export default function Contact() {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
         
         <div className="max-w-6xl mx-auto px-6 sm:px-8">
-          <nav className="py-5 flex items-center justify-center gap-8">
+          <nav className="py-5 flex items-center justify-center gap-8" style={{ marginLeft: '-20px' }}>
             {/* Dashboard, Contact */}
             <Link to="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Dashboard</Link>
             <Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Contact</Link>
@@ -108,18 +118,31 @@ export default function Contact() {
               <span className="text-xl sm:text-2xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                 Draftly
               </span>
-            </Link>
+          </Link>
 
             {/* Features, Pricing */}
             <a href="/#features" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Features</a>
             <Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Pricing</Link>
+            
+            {/* Profile Button */}
+            {user && (
+              <button
+                onClick={() => navigate('/profile')}
+                className="group ml-6 relative"
+              >
+                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity" />
+                <div className="relative w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border border-white/10">
+                  <User className="w-5 h-5 text-white" strokeWidth={2.5} />
+                </div>
+              </button>
+            )}
           </nav>
         </div>
       </header>
 
       {/* Main Content - World Class Design */}
       <main className="relative z-10 flex items-center justify-center min-h-screen px-4 sm:px-6 py-24">
-        <div className="max-w-6xl mx-auto w-full">
+        <div className="max-w-7xl mx-auto w-full">
           
           {/* Hero Section */}
           <motion.div
@@ -146,78 +169,135 @@ export default function Contact() {
             </p>
           </motion.div>
 
-          {/* Premium Contact Cards */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            {[
-              {
-                icon: Mail,
-                label: 'Email Us',
-                title: 'Drop a Line',
-                value: 'piyushsingh123443@gmail.com',
-                href: 'mailto:piyushsingh123443@gmail.com',
-                gradient: 'from-emerald-500 via-teal-500 to-emerald-600',
-                accentColor: 'emerald'
-              },
-              {
-                icon: Linkedin,
-                label: 'LinkedIn',
-                title: 'Connect Professionally',
-                value: 'Join our network',
-                href: 'https://linkedin.com',
-                gradient: 'from-blue-500 via-cyan-500 to-blue-600',
-                accentColor: 'blue'
-              },
-              {
-                icon: Instagram,
-                label: 'Instagram',
-                title: 'Follow Our Work',
-                value: 'Design inspiration daily',
-                href: 'https://instagram.com',
-                gradient: 'from-pink-500 via-purple-500 to-pink-600',
-                accentColor: 'pink'
-              }
-            ].map((social, idx) => (
-              <motion.a
-                key={idx}
-                href={social.href}
+          {/* Two Column Layout */}
+          <div className="grid lg:grid-cols-2 gap-12 mb-16">
+            {/* Left Column - Social Links */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-8" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                Connect With Us
+              </h2>
+                <div className="space-y-6">
+                {[
+                  {
+                    icon: Mail,
+                    label: 'Email Us',
+                    title: 'Drop a Line',
+                    value: 'piyushsingh123443@gmail.com',
+                    href: 'mailto:piyushsingh123443@gmail.com',
+                    gradient: 'from-emerald-500 via-teal-500 to-emerald-600',
+                  },
+                  {
+                    icon: Linkedin,
+                    label: 'LinkedIn',
+                    title: 'Connect Professionally',
+                    value: 'Join our network',
+                    href: 'https://linkedin.com',
+                    gradient: 'from-blue-500 via-cyan-500 to-blue-600',
+                  },
+                  {
+                    icon: Instagram,
+                    label: 'Instagram',
+                    title: 'Follow Our Work',
+                    value: 'Design inspiration daily',
+                    href: 'https://instagram.com',
+                    gradient: 'from-pink-500 via-purple-500 to-pink-600',
+                  }
+                ].map((social, idx) => (
+                  <motion.a
+                    key={idx}
+                    href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 + idx * 0.15, duration: 0.6 }}
-                whileHover={{ y: -8 }}
-                className="group relative bg-white/[0.03] backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:border-emerald-500/30 hover:bg-white/[0.05] transition-all duration-300"
-              >
-                <div className="relative">
-                  {/* Icon */}
-                  <div className={`w-16 h-16 bg-gradient-to-br ${social.gradient} rounded-xl flex items-center justify-center mb-6`}>
-                    <social.icon className="w-8 h-8 text-white" strokeWidth={2.5} />
-                    </div>
-                  
-                  {/* Content */}
-                  <div className="space-y-3">
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                      {social.label}
-                    </h3>
-                    <h2 className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                      {social.title}
-                    </h2>
-                    <p className="text-sm text-gray-400 leading-relaxed break-words" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                      {social.value}
-                    </p>
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + idx * 0.1 }}
+                    whileHover={{ x: 8 }}
+                    className="group relative bg-white/[0.03] backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:border-emerald-500/30 hover:bg-white/[0.05] transition-all duration-300 flex items-center gap-4"
+                  >
+                    <div className={`w-14 h-14 bg-gradient-to-br ${social.gradient} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                      <social.icon className="w-7 h-7 text-white" strokeWidth={2.5} />
               </div>
 
-                  {/* Arrow */}
-                  <div className="mt-6 flex items-center gap-2 text-gray-500 group-hover:text-emerald-400 transition-colors">
-                    <span className="text-sm font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                      Get in touch
-                    </span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <div className="flex-1">
+                      <h3 className="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-1" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                        {social.label}
+                      </h3>
+                      <p className="text-base font-bold text-white group-hover:text-emerald-400 transition-colors" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                        {social.title}
+                      </p>
+                      <p className="text-sm text-gray-400 mt-1 break-words" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                        {social.value}
+                      </p>
+              </div>
+
+                    <ArrowRight className="w-5 h-5 text-gray-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                  </motion.a>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Right Column - About Founder */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-2xl p-8 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl" />
+              
+              <div className="relative z-10">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                  About the Founder
+                </h2>
+                
+                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-white/10">
+                  <div className="relative group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000" />
+                    <div className="relative w-28 h-28 rounded-2xl overflow-hidden border-2 border-white/10 shadow-2xl">
+                      <img 
+                        src="/images/founder.jpg" 
+                        alt="Piyush Singh" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                      Piyush Singh
+                    </h3>
+                    <p className="text-emerald-400 font-medium text-sm" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                      Founder & CEO
+                    </p>
                   </div>
                 </div>
-              </motion.a>
-            ))}
+
+                <div className="space-y-4 text-gray-300 text-sm leading-relaxed" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                  <p>
+                    I've been working in the freelance and visual design industry for over six years, specializing in graphic design and UI aesthetics.
+                  </p>
+                  <p>
+                    I'm building an AI trained on over 10,000 world-class UI designs, capable of producing layouts that look professional, modern, and beautifully balanced.
+                  </p>
+                  <p>
+                    Unlike other AI tools that generate basic or repetitive structures, Draftly delivers premium-quality UIs with production-ready code.
+                  </p>
+                    </div>
+
+                <Link
+                  to="/about"
+                  className="inline-flex items-center gap-2 mt-6 text-emerald-400 hover:text-emerald-300 font-semibold transition-colors group"
+                  style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                >
+                  Read full story
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </div>
+            </motion.div>
+                    </div>
 
           {/* Bottom CTA Section */}
             <motion.div

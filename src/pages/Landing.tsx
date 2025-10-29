@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform, useInView } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { 
   ArrowRight, Palette, Code2, Zap, Shield, Users, 
   Plus, Mic, Upload, Sparkles, Star, Rocket, Globe,
-  Layers, Layout, Box, Grid, Smartphone, Monitor,
-  TrendingUp, Award, CheckCircle, Heart, Circle, Hexagon,
-  Command, Terminal, Wand2
+  Layers, Layout, Smartphone, Monitor,
+  TrendingUp, Award, CheckCircle, Heart,
+  Wand2, Send, Paperclip, Building2, Briefcase, 
+  Target, Headphones, BarChart3, Activity, User as UserIcon
 } from 'lucide-react'
+import { auth, db, doc, getDoc } from '../firebase'
+import AuthModal from '../components/AuthModal'
+import OnboardingFlow from '../components/OnboardingFlow'
 
 const chatPlaceholders = [
   "Design a modern SaaS landing page...",
@@ -25,10 +29,32 @@ export default function Landing() {
   const [chatInput, setChatInput] = useState('')
   const [displayedText, setDisplayedText] = useState('')
   const [isTyping, setIsTyping] = useState(true)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const navigate = useNavigate()
 
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 1000], [0, 200])
   const y2 = useTransform(scrollY, [0, 1000], [0, -100])
+
+  // Auth state listener
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser)
+        // Check if user has completed onboarding
+        const docRef = doc(db, 'users', currentUser.uid)
+        const docSnap = await getDoc(docRef)
+        if (!docSnap.exists() || !docSnap.data().onboarded) {
+          setShowOnboarding(true)
+        }
+      } else {
+        setUser(null)
+      }
+    })
+    return () => unsubscribe()
+  }, [])
 
   // Typewriter effect
   useEffect(() => {
@@ -81,6 +107,14 @@ export default function Landing() {
           className="absolute inset-0 bg-black"
         />
         
+        {/* Subtle Emerald Gradient Overlay */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, rgba(20, 184, 166, 0.04) 30%, transparent 60%), radial-gradient(circle at 50% 100%, rgba(20, 184, 166, 0.06) 0%, rgba(16, 185, 129, 0.02) 40%, transparent 70%)',
+          }}
+        />
+        
         {/* Very subtle orb - top (with parallax) */}
         <motion.div 
           className="absolute top-0 left-1/2 w-[800px] h-[400px] rounded-full"
@@ -114,7 +148,7 @@ export default function Landing() {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
         
         <div className="max-w-6xl mx-auto px-6 sm:px-8">
-          <nav className="py-5 flex items-center justify-center gap-8">
+          <nav className="py-5 flex items-center justify-center gap-8 relative" style={{ marginLeft: '-20px' }}>
             {/* Dashboard, Contact */}
             <Link to="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Dashboard</Link>
             <Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Contact</Link>
@@ -129,13 +163,26 @@ export default function Landing() {
             {/* Features, Pricing */}
             <a href="#features" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Features</a>
             <Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Pricing</Link>
+            
+            {/* Profile Icon (only when logged in) - Far Right */}
+            {user && (
+              <button
+                onClick={() => navigate('/profile')}
+                className="group absolute right-0"
+              >
+                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity" />
+                <div className="relative w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border border-white/10">
+                  <UserIcon className="w-5 h-5 text-white" strokeWidth={2.5} />
+          </div>
+              </button>
+            )}
           </nav>
           </div>
       </motion.header>
 
       {/* Hero Section - Premium Design */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 pt-32 pb-20">
-        <div className="max-w-6xl mx-auto w-full relative z-10">
+      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 pt-32 pb-20 z-20">
+        <div className="max-w-6xl mx-auto w-full relative z-20">
           <motion.div 
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
@@ -157,44 +204,70 @@ export default function Landing() {
 
             {/* Main Heading - Perfectly Centered */}
             <motion.h1 
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-white leading-[1.1] text-center w-full"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white text-center w-full font-bold"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              style={{ fontFamily: 'Next, sans-serif', fontWeight: 300, letterSpacing: '0.03em' }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, letterSpacing: '0.03em', lineHeight: 1.1 }}
             >
-              <span className="block mb-3">Create World Class</span>
+              <span className="block mb-1">Create World Class</span>
               <span className="block">
                 Ui With Draftly
               </span>
             </motion.h1>
 
-            {/* Subtitle - Perfectly Centered */}
-            <motion.p 
-              className="text-lg sm:text-xl text-gray-400 max-w-2xl text-center leading-relaxed px-4 w-full"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+            {/* Value Proposition - Clear & Concise */}
+            <motion.div 
+              className="max-w-4xl text-center px-4 w-full space-y-4"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
             >
-              Professional UI generation powered by advanced AI
-            </motion.p>
+              <p className="text-base sm:text-lg text-emerald-400 font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                For frontend teams shipping <span className="font-bold">10x better</span>
+              </p>
+              <p className="text-sm sm:text-base text-gray-400" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                <span className="line-through text-white">$50,000 design budget</span> → <span className="text-emerald-400 font-bold">$50 with Draftly</span>
+              </p>
+            </motion.div>
+
+            {/* Join Waitlist Button - Centered Below Tagline */}
+            {!user && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+                className="flex items-center justify-center"
+              >
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="group relative px-6 py-2.5 bg-white/5 backdrop-blur-sm border border-emerald-500/30 rounded-full hover:border-emerald-500/60 transition-all overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="relative text-sm text-emerald-400 font-semibold flex items-center gap-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                    Join Waitlist
+                    <Sparkles className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
+                  </span>
+                </button>
+              </motion.div>
+            )}
 
             {/* Main Chat Input Area with B2B Elements - Centered */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }} 
+              initial={{ opacity: 0, y: 30 }} 
               animate={{ opacity: 1, y: 0 }} 
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.7, duration: 0.7, type: "spring", stiffness: 100 }}
               className="w-full max-w-4xl relative px-6"
             >
               {/* B2B Value Props - Top Left (Further from chat) */}
               <motion.div 
-                className="absolute -top-20 -left-8 sm:-left-20 lg:-left-32"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                className="absolute -top-32 -left-16 sm:-left-40 lg:-left-64 xl:-left-96"
+                initial={{ opacity: 0, x: -20, rotate: -12 }}
+                animate={{ opacity: 1, x: 0, rotate: 6 }}
+                whileHover={{ rotate: 12, scale: 1.05 }}
                 transition={{ delay: 0.8 }}
               >
-                <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl border border-emerald-500/20 px-4 py-3 backdrop-blur-sm shadow-lg">
+                <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl border border-emerald-500/20 px-4 py-3 backdrop-blur-sm shadow-lg cursor-pointer">
                   <div className="flex items-center gap-2 mb-1">
                     <TrendingUp className="w-4 h-4 text-emerald-400" />
                     <span className="text-xs font-semibold text-emerald-400" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>ROI BOOST</span>
@@ -205,12 +278,13 @@ export default function Landing() {
 
               {/* B2B Value Props - Top Right (Further from chat) */}
               <motion.div 
-                className="absolute -top-20 -right-8 sm:-right-20 lg:-right-32"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
+                className="absolute -top-32 -right-16 sm:-right-40 lg:-right-64 xl:-right-96"
+                initial={{ opacity: 0, x: 20, rotate: 12 }}
+                animate={{ opacity: 1, x: 0, rotate: -6 }}
+                whileHover={{ rotate: -12, scale: 1.05 }}
                 transition={{ delay: 0.9 }}
               >
-                <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl border border-purple-500/20 px-4 py-3 backdrop-blur-sm shadow-lg">
+                <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl border border-purple-500/20 px-4 py-3 backdrop-blur-sm shadow-lg cursor-pointer">
                   <div className="flex items-center gap-2 mb-1">
                     <Users className="w-4 h-4 text-purple-400" />
                     <span className="text-xs font-semibold text-purple-400" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>ENTERPRISE</span>
@@ -221,7 +295,7 @@ export default function Landing() {
 
               {/* Floating Icon Cards Around Chat */}
               <motion.div 
-                className="absolute -left-24 top-16 hidden xl:block"
+                className="absolute -left-40 lg:-left-64 xl:-left-96 top-4 hidden xl:block"
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1.0 }}
@@ -232,7 +306,7 @@ export default function Landing() {
               </motion.div>
 
               <motion.div 
-                className="absolute -right-24 top-16 hidden xl:block"
+                className="absolute -right-40 lg:-right-64 xl:-right-96 top-4 hidden xl:block"
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1.1 }}
@@ -244,7 +318,7 @@ export default function Landing() {
 
               {/* Additional Decorative Elements */}
               <motion.div 
-                className="absolute -left-16 top-40 hidden lg:block"
+                className="absolute -left-32 lg:-left-56 xl:-left-80 top-20 hidden lg:block"
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1.2 }}
@@ -255,7 +329,7 @@ export default function Landing() {
               </motion.div>
 
               <motion.div 
-                className="absolute -right-16 top-40 hidden lg:block"
+                className="absolute -right-32 lg:-right-56 xl:-right-80 top-20 hidden lg:block"
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1.3 }}
@@ -267,24 +341,26 @@ export default function Landing() {
 
               {/* Bottom Cards - B2B Focused */}
               <motion.div 
-                className="absolute -bottom-14 left-12 sm:left-20 hidden sm:block"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                className="absolute -bottom-24 left-8 sm:left-32 lg:left-48 xl:left-72 hidden sm:block"
+                initial={{ opacity: 0, y: 10, rotate: -8 }}
+                animate={{ opacity: 1, y: 0, rotate: 3 }}
+                whileHover={{ rotate: 8, scale: 1.05 }}
                 transition={{ delay: 1.4 }}
               >
-                <div className="bg-gradient-to-br from-emerald-500/5 to-teal-500/5 rounded-xl border border-emerald-500/20 px-3 py-2 backdrop-blur-sm flex items-center gap-2 shadow-lg">
+                <div className="bg-gradient-to-br from-emerald-500/5 to-teal-500/5 rounded-xl border border-emerald-500/20 px-3 py-2 backdrop-blur-sm flex items-center gap-2 shadow-lg cursor-pointer">
                   <Shield className="w-4 h-4 text-emerald-400" />
                   <span className="text-xs text-gray-400" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>SOC 2 Compliant</span>
                 </div>
               </motion.div>
 
               <motion.div 
-                className="absolute -bottom-14 right-12 sm:right-20 hidden sm:block"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                className="absolute -bottom-24 right-8 sm:right-32 lg:right-48 xl:right-72 hidden sm:block"
+                initial={{ opacity: 0, y: 10, rotate: 8 }}
+                animate={{ opacity: 1, y: 0, rotate: -3 }}
+                whileHover={{ rotate: -8, scale: 1.05 }}
                 transition={{ delay: 1.5 }}
               >
-                <div className="bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-xl border border-purple-500/20 px-3 py-2 backdrop-blur-sm flex items-center gap-2 shadow-lg">
+                <div className="bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-xl border border-purple-500/20 px-3 py-2 backdrop-blur-sm flex items-center gap-2 shadow-lg cursor-pointer">
                   <Zap className="w-4 h-4 text-purple-400" />
                   <span className="text-xs text-gray-400" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>99.9% Uptime</span>
                 </div>
@@ -394,16 +470,16 @@ export default function Landing() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.8 }}
-              className="mt-16 flex flex-col items-center"
+              className="mt-16 flex flex-col items-center relative z-30"
             >
-              <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center gap-2 mb-8">
                 <div className="w-8 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
                 <p className="text-xs text-white font-semibold tracking-wider" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                   POWERING INNOVATION AT
                 </p>
                 <div className="w-8 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
               </div>
-              <div className="flex flex-wrap items-center justify-center gap-8">
+              <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
                 {[
                   { name: 'SaaS Companies', icon: Globe, color: 'from-blue-400 to-cyan-400' },
                   { name: 'Digital Agencies', icon: Users, color: 'from-purple-400 to-pink-400' },
@@ -416,12 +492,16 @@ export default function Landing() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.9 + idx * 0.1 }}
                     whileHover={{ scale: 1.05, y: -2 }}
-                    className="flex items-center gap-2 text-white hover:text-emerald-400 transition-colors cursor-pointer group"
+                    className="flex items-center gap-3 text-white hover:text-emerald-400 transition-colors cursor-pointer group px-4 py-2 relative z-30"
                   >
-                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${company.color} opacity-20 group-hover:opacity-30 transition-opacity flex items-center justify-center`}>
-                      <company.icon className="w-4 h-4 text-white" />
+                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${company.color} flex items-center justify-center border border-white/20 shadow-xl group-hover:scale-110 transition-transform relative overflow-hidden`}>
+                      <div className={`absolute inset-0 bg-gradient-to-br ${company.color} opacity-70`} />
+                      {React.createElement([Globe, Users, Building2, Rocket][idx], {
+                        className: "w-7 h-7 text-white relative z-10",
+                        strokeWidth: 2
+                      })}
                     </div>
-                    <span className="text-sm font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>{company.name}</span>
+                    <span className="text-sm font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>{company.name}</span>
                   </motion.div>
                 ))}
               </div>
@@ -429,21 +509,21 @@ export default function Landing() {
 
           </motion.div>
           
-           {/* Trust Bar - User Types with Icons */}
-           <motion.div 
-             initial={{ opacity: 0, y: 40 }}
-             whileInView={{ opacity: 1, y: 0 }}
-             viewport={{ once: true, amount: 0.3 }}
-             transition={{ duration: 0.6 }}
-             className="mt-20 border-t border-white/10 dark:border-white/10 light:border-gray-200 pt-12"
-           >
-             <div className="flex items-center justify-center gap-2 mb-10">
-               <Star className="w-4 h-4 text-emerald-400 animate-pulse" />
-               <p className="text-center text-sm font-semibold text-gray-400 dark:text-gray-400 light:text-gray-600" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif', letterSpacing: '0.1em' }}>
-                 TRUSTED BY
-               </p>
-               <Star className="w-4 h-4 text-emerald-400 animate-pulse" />
-             </div>
+          {/* Trust Bar - User Types with Icons */}
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               viewport={{ once: false, amount: 0.3 }}
+               transition={{ duration: 0.8, ease: "easeOut" }}
+            className="mt-20 border-t border-white/10 dark:border-white/10 light:border-gray-200 pt-12 relative z-30"
+          >
+            <div className="flex items-center justify-center gap-3 mb-10 relative z-30">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+              <p className="text-center text-sm font-semibold text-white relative z-30" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif', letterSpacing: '0.1em' }}>
+                TRUSTED BY
+              </p>
+              <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+            </div>
              <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
                {[
                  { name: 'Shopkeepers', color: 'from-emerald-400 to-teal-400', icon: Monitor },
@@ -453,60 +533,68 @@ export default function Landing() {
                  { name: 'Entrepreneurs', color: 'from-yellow-400 to-orange-400', icon: TrendingUp },
                  { name: 'Agencies', color: 'from-indigo-400 to-purple-400', icon: Users }
                ].map((user, idx) => (
-            <motion.div
-                   key={idx} 
-                   initial={{ opacity: 0, y: 20, scale: 0.9 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                   viewport={{ once: true }}
-                   transition={{ delay: idx * 0.1, duration: 0.5 }}
-                   whileHover={{ scale: 1.1, y: -5 }}
-                   className="flex flex-col items-center gap-2"
-                 >
-                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${user.color} opacity-20 flex items-center justify-center`}>
-                     <user.icon className={`w-6 h-6 bg-gradient-to-r ${user.color} bg-clip-text text-transparent`} style={{ filter: 'brightness(3)' }} />
-                   </div>
-                   <span className={`text-sm sm:text-base font-bold bg-gradient-to-r ${user.color} bg-clip-text text-transparent`} style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif', letterSpacing: '-0.01em' }}>
-                     {user.name}
-                   </span>
-                 </motion.div>
+           <motion.div
+                  key={idx} 
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+             whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1, duration: 0.5 }}
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  className="flex flex-col items-center gap-3 relative z-30"
+                >
+                  <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${user.color} flex items-center justify-center border border-white/20 shadow-2xl relative overflow-hidden group`}>
+                    <div className={`absolute inset-0 bg-gradient-to-br ${user.color} group-hover:opacity-90 transition-opacity opacity-70`} />
+                    {React.createElement([Monitor, Palette, Layers, Code2, Rocket, Building2][idx], {
+                      className: "w-9 h-9 text-white relative z-10",
+                      strokeWidth: 2
+                    })}
+                  </div>
+                  <span className={`text-sm sm:text-base font-bold bg-gradient-to-r ${user.color} bg-clip-text text-transparent`} style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif', letterSpacing: '-0.01em' }}>
+                    {user.name}
+                  </span>
+                </motion.div>
                ))}
              </div>
            </motion.div>
 
-          {/* Stats Section - Enhanced with Icons */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-32 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8"
-          >
+         {/* Stats Section - Enhanced with Icons */}
+         <motion.div 
+           initial={{ opacity: 0, y: 20 }}
+           whileInView={{ opacity: 1, y: 0 }}
+           viewport={{ once: true }}
+           className="mt-32 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 relative z-30"
+         >
             {[
               { value: '10,000+', label: 'Pages Analyzed', color: 'from-emerald-400 to-teal-600', icon: Layout },
               { value: '99.9%', label: 'Uptime', color: 'from-purple-400 to-purple-600', icon: CheckCircle },
-              { value: '<2s', label: 'Generation Time', color: 'from-green-400 to-green-600', icon: Zap },
+              { value: '5min', label: 'Generation Time', color: 'from-green-400 to-green-600', icon: Zap },
               { value: '24/7', label: 'Support', color: 'from-orange-400 to-orange-600', icon: Heart }
               ].map((stat, idx) => (
-              <motion.div 
-                key={idx} 
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="text-center bg-white/[0.02] dark:bg-white/[0.02] light:bg-gray-50 border border-white/5 dark:border-white/5 light:border-gray-200 rounded-2xl p-6 hover:border-emerald-500/20 transition-all"
-              >
-                <div className="flex justify-center mb-3">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} opacity-20 flex items-center justify-center`}>
-                    <stat.icon className="w-6 h-6 text-emerald-400" />
-                  </div>
+             <motion.div 
+               key={idx} 
+               initial={{ opacity: 0, scale: 0.9 }}
+               whileInView={{ opacity: 1, scale: 1 }}
+               viewport={{ once: true }}
+               transition={{ delay: idx * 0.1 }}
+               whileHover={{ scale: 1.05, y: -5 }}
+               className="text-center bg-white/[0.02] dark:bg-white/[0.02] light:bg-gray-50 border border-white/10 dark:border-white/10 light:border-gray-200 rounded-2xl p-6 hover:border-emerald-500/30 transition-all group relative z-30"
+             >
+               <div className="flex justify-center mb-4">
+                 <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center border border-white/20 shadow-2xl group-hover:scale-110 transition-transform relative overflow-hidden`}>
+                   <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-70`} />
+                   {React.createElement([BarChart3, CheckCircle, Zap, Headphones][idx], {
+                     className: "w-10 h-10 text-white relative z-10",
+                     strokeWidth: 2
+                   })}
+                 </div>
+               </div>
+               <div className={`text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-2`} style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                 {stat.value}
+               </div>
+               <div className="text-xs sm:text-sm text-gray-400 dark:text-gray-400 light:text-gray-600 font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                 {stat.label}
                 </div>
-                <div className={`text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-2`} style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                  {stat.value}
-                </div>
-                <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-500 light:text-gray-600 font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                  {stat.label}
-                </div>
-              </motion.div>
+             </motion.div>
               ))}
           </motion.div>
         </div>
@@ -702,6 +790,27 @@ export default function Landing() {
         </div>
       </footer>
 
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        onSuccess={(authUser) => {
+          setUser(authUser)
+          setShowOnboarding(true)
+        }}
+      />
+
+      {/* Onboarding Flow */}
+      {showOnboarding && user && (
+        <OnboardingFlow 
+          user={user} 
+          onComplete={() => {
+            setShowOnboarding(false)
+            // Redirect to homepage immediately, profile icon will appear
+            window.location.href = '/'
+          }}
+        />
+      )}
     </div>
   )
 }

@@ -1,11 +1,21 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { 
-  Sparkles, Zap, Database, Cpu, TrendingUp, Clock, Shield, Globe, Layout
+  Sparkles, Zap, Database, Cpu, TrendingUp, Clock, Shield, Globe, Layout, User
 } from 'lucide-react'
+import { auth } from '../firebase'
 
 export default function Dashboard() {
+  const [user, setUser] = useState<any>(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser)
+    })
+    return () => unsubscribe()
+  }, [])
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Grain Texture Overlay */}
@@ -49,7 +59,7 @@ export default function Dashboard() {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
         
         <div className="max-w-6xl mx-auto px-6 sm:px-8">
-          <nav className="py-5 flex items-center justify-center gap-8">
+          <nav className="py-5 flex items-center justify-center gap-8" style={{ marginLeft: '-20px' }}>
             {/* Dashboard, Contact */}
             <Link to="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Dashboard</Link>
             <Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Contact</Link>
@@ -64,6 +74,19 @@ export default function Dashboard() {
             {/* Features, Pricing */}
             <a href="/#features" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Features</a>
             <Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Pricing</Link>
+            
+            {/* Profile Button */}
+            {user && (
+              <button
+                onClick={() => navigate('/profile')}
+                className="group ml-6 relative"
+              >
+                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity" />
+                <div className="relative w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border border-white/10">
+                  <User className="w-5 h-5 text-white" strokeWidth={2.5} />
+                </div>
+              </button>
+            )}
           </nav>
         </div>
       </header>

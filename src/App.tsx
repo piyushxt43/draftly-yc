@@ -5,6 +5,8 @@ import Landing from './pages/Landing'
 import Contact from './pages/Contact'
 import Dashboard from './pages/Dashboard'
 import Pricing from './pages/Pricing'
+import About from './pages/About'
+import Profile from './pages/Profile'
 
 function AnimatedRoutes() {
   const location = useLocation()
@@ -61,6 +63,32 @@ function AnimatedRoutes() {
               transition={{ duration: 0.3 }}
             >
               <Pricing />
+            </motion.div>
+          } 
+        />
+        <Route 
+          path="/about" 
+          element={
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <About />
+            </motion.div>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Profile />
             </motion.div>
           } 
         />
