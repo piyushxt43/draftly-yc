@@ -712,9 +712,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <Link to="/" className="group flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
-                <Layout className="w-4 h-4 text-white" />
-              </div>
+              <img src="/logo.png" alt="Draftly" className="w-8 h-8 object-contain group-hover:scale-110 transition-transform" />
               <span className="text-xl font-semibold text-white dark:text-white light:text-gray-900 hover:text-emerald-400 transition-colors" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                 Draftly
               </span>

@@ -26,7 +26,7 @@ export default function Header() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav className="py-4 sm:py-5 flex items-center relative">
+        <nav className="py-4 sm:py-5 flex items-center relative" style={{ marginLeft: '-20px' }}>
           {/* Mobile: Hamburger Menu Button (Far Left) */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -46,7 +46,8 @@ export default function Header() {
             <Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Contact</Link>
 
             {/* Draftly Logo - Desktop */}
-            <Link to="/" className="group mx-4">
+            <Link to="/" className="group mx-4 flex items-center gap-2">
+              <img src="/logo.png" alt="Draftly" className="w-8 h-8 object-contain group-hover:scale-110 transition-transform" />
               <span className="text-2xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                 Draftly
               </span>
@@ -57,7 +58,8 @@ export default function Header() {
           </div>
 
           {/* Mobile: Draftly Logo - Centered */}
-          <Link to="/" className="lg:hidden absolute left-1/2 -translate-x-1/2 group z-10 pointer-events-auto">
+          <Link to="/" className="lg:hidden absolute left-1/2 -translate-x-1/2 group z-10 pointer-events-auto flex items-center gap-1.5">
+            <img src="/logo.png" alt="Draftly" className="w-6 h-6 object-contain group-hover:scale-110 transition-transform" />
             <span className="text-xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
               Draftly
             </span>
