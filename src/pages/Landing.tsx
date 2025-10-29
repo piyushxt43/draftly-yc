@@ -185,8 +185,8 @@ export default function Landing() {
               <span className="text-xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                 Draftly
               </span>
-            </Link>
-            
+          </Link>
+
             {/* Profile Icon (only when logged in) - Far Right (Both mobile & desktop) */}
             {user && (
               <button
@@ -226,8 +226,8 @@ export default function Landing() {
                     className="block px-4 py-3 text-base text-gray-300 hover:text-white hover:bg-emerald-500/10 rounded-lg transition-all font-medium"
                     style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
                   >
-                    Features
-                  </a>
+              Features
+            </a>
                   <Link 
                     to="/pricing" 
                     onClick={() => setMobileMenuOpen(false)}
@@ -243,12 +243,12 @@ export default function Landing() {
                     style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
                   >
                     Contact
-                  </Link>
-                </div>
+            </Link>
+          </div>
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+          </div>
       </motion.header>
 
       {/* Hero Section - Premium Design */}
@@ -565,11 +565,10 @@ export default function Landing() {
                     whileHover={{ scale: 1.05, y: -2 }}
                     className="flex items-center gap-3 text-white hover:text-emerald-400 transition-colors cursor-pointer group px-4 py-2 relative z-30"
                   >
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${company.color} flex items-center justify-center border border-white/20 shadow-xl group-hover:scale-110 transition-transform relative overflow-hidden`}>
-                      <div className={`absolute inset-0 bg-gradient-to-br ${company.color} opacity-70`} />
+                    <div className="w-14 h-14 rounded-xl bg-white/5 backdrop-blur-sm flex items-center justify-center border border-white/10 group-hover:border-white/20 group-hover:bg-white/10 transition-all relative overflow-hidden">
                       {React.createElement([Globe, Users, Building2, Rocket][idx], {
-                        className: "w-7 h-7 text-white relative z-10",
-                        strokeWidth: 2
+                        className: "w-7 h-7 text-gray-400 group-hover:text-white relative z-10 transition-colors",
+                        strokeWidth: 1.5
                       })}
                     </div>
                     <span className="text-sm font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>{company.name}</span>
@@ -604,23 +603,22 @@ export default function Landing() {
                  { name: 'Entrepreneurs', color: 'from-yellow-400 to-orange-400', icon: TrendingUp },
                  { name: 'Agencies', color: 'from-indigo-400 to-purple-400', icon: Users }
                ].map((user, idx) => (
-           <motion.div
+          <motion.div
                   key={idx} 
                   initial={{ opacity: 0, y: 20, scale: 0.9 }}
-             whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1, duration: 0.5 }}
                   whileHover={{ scale: 1.05, y: -3 }}
-                  className="flex flex-col items-center gap-3 relative z-30"
+                  className="flex flex-col items-center gap-3 relative z-30 group"
                 >
-                  <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${user.color} flex items-center justify-center border border-white/20 shadow-2xl relative overflow-hidden group`}>
-                    <div className={`absolute inset-0 bg-gradient-to-br ${user.color} group-hover:opacity-90 transition-opacity opacity-70`} />
+                  <div className="w-20 h-20 rounded-2xl bg-white/5 backdrop-blur-sm flex items-center justify-center border border-white/10 group-hover:border-white/20 group-hover:bg-white/10 transition-all relative overflow-hidden">
                     {React.createElement([Monitor, Palette, Layers, Code2, Rocket, Building2][idx], {
-                      className: "w-9 h-9 text-white relative z-10",
-                      strokeWidth: 2
+                      className: "w-9 h-9 text-gray-400 group-hover:text-white relative z-10 transition-colors",
+                      strokeWidth: 1.5
                     })}
                   </div>
-                  <span className={`text-sm sm:text-base font-bold bg-gradient-to-r ${user.color} bg-clip-text text-transparent`} style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif', letterSpacing: '-0.01em' }}>
+                  <span className="text-sm sm:text-base font-semibold text-gray-400 group-hover:text-white transition-colors" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif', letterSpacing: '-0.01em' }}>
                     {user.name}
                   </span>
                 </motion.div>
@@ -641,31 +639,30 @@ export default function Landing() {
               { value: '5min', label: 'Generation Time', color: 'from-green-400 to-green-600', icon: Zap },
               { value: '24/7', label: 'Support', color: 'from-orange-400 to-orange-600', icon: Heart }
               ].map((stat, idx) => (
-             <motion.div 
-               key={idx} 
-               initial={{ opacity: 0, scale: 0.9 }}
-               whileInView={{ opacity: 1, scale: 1 }}
-               viewport={{ once: true }}
-               transition={{ delay: idx * 0.1 }}
-               whileHover={{ scale: 1.05, y: -5 }}
-               className="text-center bg-white/[0.02] dark:bg-white/[0.02] light:bg-gray-50 border border-white/10 dark:border-white/10 light:border-gray-200 rounded-2xl p-6 hover:border-emerald-500/30 transition-all group relative z-30"
-             >
-               <div className="flex justify-center mb-4">
-                 <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center border border-white/20 shadow-2xl group-hover:scale-110 transition-transform relative overflow-hidden`}>
-                   <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-70`} />
-                   {React.createElement([BarChart3, CheckCircle, Zap, Headphones][idx], {
-                     className: "w-10 h-10 text-white relative z-10",
-                     strokeWidth: 2
-                   })}
-                 </div>
-               </div>
-               <div className={`text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-2`} style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                 {stat.value}
-               </div>
-               <div className="text-xs sm:text-sm text-gray-400 dark:text-gray-400 light:text-gray-600 font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                 {stat.label}
+            <motion.div 
+              key={idx} 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="text-center bg-white/[0.02] dark:bg-white/[0.02] light:bg-gray-50 border border-white/10 dark:border-white/10 light:border-gray-200 rounded-2xl p-6 hover:border-emerald-500/30 transition-all group relative z-30"
+            >
+              <div className="flex justify-center mb-4">
+                <div className="w-20 h-20 rounded-2xl flex items-center justify-center border-2 border-white/20 group-hover:border-emerald-500/50 transition-all relative overflow-hidden">
+                  {React.createElement([BarChart3, CheckCircle, Zap, Headphones][idx], {
+                    className: "w-10 h-10 text-gray-400 group-hover:text-emerald-400 relative z-10 transition-colors",
+                    strokeWidth: 1.5
+                  })}
                 </div>
-             </motion.div>
+              </div>
+              <div className={`text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-2`} style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                {stat.value}
+              </div>
+              <div className="text-xs sm:text-sm text-gray-400 dark:text-gray-400 light:text-gray-600 font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                {stat.label}
+               </div>
+            </motion.div>
               ))}
           </motion.div>
         </div>
