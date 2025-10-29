@@ -4,13 +4,13 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPasswor
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDQTD9SHIJ9BMnauJ2cJevIVxYxtuWJJaY",
-  authDomain: "draflty.firebaseapp.com",
-  projectId: "draflty",
-  storageBucket: "draflty.firebasestorage.app",
-  messagingSenderId: "999469134861",
-  appId: "1:999469134861:web:207bd3ee83fee13bd6d144",
-  measurementId: "G-P6S60N1JV1"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
