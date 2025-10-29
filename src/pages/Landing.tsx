@@ -38,6 +38,17 @@ export default function Landing() {
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 1000], [0, 200])
   const y2 = useTransform(scrollY, [0, 1000], [0, -100])
+  
+  // Scroll-linked color shifts
+  const hue1 = useTransform(scrollY, [0, 1000, 2000, 3000], [160, 180, 160, 170])
+  const hue2 = useTransform(scrollY, [0, 1000, 2000, 3000], [170, 165, 175, 168])
+  const opacity1 = useTransform(scrollY, [0, 500, 1000, 1500], [0.15, 0.25, 0.15, 0.20])
+  const opacity2 = useTransform(scrollY, [0, 500, 1000, 1500], [0.08, 0.12, 0.08, 0.10])
+  
+  // Parallax layers
+  const parallax1 = useTransform(scrollY, [0, 2000], [0, -400])
+  const parallax2 = useTransform(scrollY, [0, 2000], [0, -200])
+  const parallax3 = useTransform(scrollY, [0, 2000], [0, -600])
 
   // Auth state listener
   useEffect(() => {
@@ -137,6 +148,187 @@ export default function Landing() {
             y: y2
           }}
         />
+
+        {/* Scroll-Linked Gradient Mesh */}
+        <motion.div 
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(at 27% 37%, rgba(16, 185, 129, 0.12) 0px, transparent 50%), radial-gradient(at 97% 21%, rgba(20, 184, 166, 0.09) 0px, transparent 50%), radial-gradient(at 52% 99%, rgba(16, 185, 129, 0.08) 0px, transparent 50%), radial-gradient(at 10% 29%, rgba(20, 184, 166, 0.07) 0px, transparent 50%), radial-gradient(at 97% 96%, rgba(16, 185, 129, 0.06) 0px, transparent 50%), radial-gradient(at 33% 50%, rgba(20, 184, 166, 0.05) 0px, transparent 50%), radial-gradient(at 79% 53%, rgba(16, 185, 129, 0.04) 0px, transparent 50%)',
+            filter: 'blur(100px) saturate(150%)',
+            opacity: opacity1,
+            y: parallax1,
+          }}
+        />
+
+        {/* Dynamic Gradient Overlay - Changes with Scroll */}
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(135deg, 
+              hsla(${hue1}, 70%, 50%, ${opacity1}) 0%, 
+              hsla(${hue2}, 75%, 55%, ${opacity2}) 50%, 
+              transparent 100%)`,
+            filter: 'blur(80px)',
+            y: parallax2,
+          }}
+        />
+
+        {/* Parallax Light Beams */}
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={`beam-${i}`}
+            className="absolute"
+            style={{
+              width: '2px',
+              height: '100%',
+              left: `${20 + i * 30}%`,
+              background: 'linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.15) 50%, transparent)',
+              filter: 'blur(1px)',
+              y: useTransform(scrollY, [0, 2000], [0, -300 - i * 100]),
+            }}
+            animate={{
+              opacity: [0, 0.5, 0],
+              scaleY: [0.8, 1.2, 0.8],
+            }}
+            transition={{
+              duration: 8 + i * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 2
+            }}
+          />
+        ))}
+
+        {/* 3D-like Morphing Blobs with Parallax */}
+        {[...Array(4)].map((_, i) => (
+          <motion.div
+            key={`blob-${i}`}
+            className="absolute"
+            style={{
+              width: 300 + i * 50,
+              height: 300 + i * 50,
+              left: `${i * 25}%`,
+              top: `${i * 20}%`,
+              background: `radial-gradient(circle, rgba(${16 + i * 5}, ${185 - i * 10}, ${129 + i * 5}, 0.08) 0%, transparent 70%)`,
+              filter: 'blur(60px)',
+              borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%',
+              y: useTransform(scrollY, [0, 2000], [0, -150 - i * 50]),
+            }}
+            animate={{
+              borderRadius: [
+                '30% 70% 70% 30% / 30% 30% 70% 70%',
+                '70% 30% 30% 70% / 70% 70% 30% 30%',
+                '50% 50% 50% 50% / 50% 50% 50% 50%',
+                '30% 70% 70% 30% / 30% 30% 70% 70%',
+              ],
+              x: [0, 50, -30, 0],
+              scale: [1, 1.1, 0.9, 1],
+              opacity: [0.3, 0.5, 0.4, 0.3],
+            }}
+            transition={{
+              duration: 25 + i * 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 3
+            }}
+          />
+        ))}
+
+        {/* GLSL-like Noise Effect with SVG Filter */}
+        <svg className="absolute inset-0 w-full h-full opacity-20" style={{ mixBlendMode: 'overlay' }}>
+          <defs>
+            <filter id="noiseShader">
+              <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" seed="2">
+                <animate attributeName="baseFrequency" values="0.8;1.2;0.8" dur="20s" repeatCount="indefinite" />
+              </feTurbulence>
+              <feColorMatrix type="saturate" values="0.3" />
+              <feBlend mode="screen" in="SourceGraphic" />
+            </filter>
+          </defs>
+          <rect width="100%" height="100%" filter="url(#noiseShader)" fill="rgba(16, 185, 129, 0.05)" />
+        </svg>
+
+        {/* Shader-like Wave Pattern */}
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            background: 'repeating-linear-gradient(90deg, transparent, transparent 100px, rgba(16, 185, 129, 0.02) 100px, rgba(16, 185, 129, 0.02) 200px)',
+            y: parallax3,
+          }}
+        />
+
+        {/* Diagonal Lines - Cyberpunk Style */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.02]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="diagonalLines" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="40" stroke="rgba(16, 185, 129, 0.5)" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#diagonalLines)" />
+        </svg>
+
+        {/* 3D Grid Effect - Depth Illusion */}
+        <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="3dgrid" width="100" height="100" patternUnits="userSpaceOnUse">
+              <motion.path
+                d="M 100 0 L 0 0 0 100"
+                fill="none"
+                stroke="rgba(16, 185, 129, 0.3)"
+                strokeWidth="0.5"
+              />
+              <motion.circle
+                cx="50"
+                cy="50"
+                r="2"
+                fill="rgba(16, 185, 129, 0.5)"
+                animate={{
+                  r: [2, 4, 2],
+                  opacity: [0.3, 0.7, 0.3]
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
+            </pattern>
+            <linearGradient id="gridFade" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="rgba(16, 185, 129, 0.1)" />
+              <stop offset="50%" stopColor="rgba(16, 185, 129, 0.3)" />
+              <stop offset="100%" stopColor="rgba(16, 185, 129, 0.05)" />
+            </linearGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#3dgrid)" opacity="0.5" />
+        </svg>
+
+        {/* Energy Particles - 3D Wave Simulation */}
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={`energy-${i}`}
+            className="absolute w-1 h-1 rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(16, 185, 129, 0.8), rgba(16, 185, 129, 0.2))',
+              left: `${(i % 5) * 20 + 10}%`,
+              top: `${Math.floor(i / 5) * 33 + 10}%`,
+              boxShadow: '0 0 15px rgba(16, 185, 129, 0.5), 0 0 30px rgba(16, 185, 129, 0.2)',
+              filter: 'blur(0.5px)',
+              y: parallax2,
+            }}
+            animate={{
+              y: [0, -20, 0, 20, 0],
+              x: [0, 10, -10, 5, 0],
+              opacity: [0.3, 0.8, 0.5, 0.9, 0.3],
+              scale: [1, 1.5, 1.2, 1.8, 1],
+            }}
+            transition={{
+              duration: 5 + Math.random() * 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.3
+            }}
+          />
+        ))}
       </div>
 
       {/* Header */}
