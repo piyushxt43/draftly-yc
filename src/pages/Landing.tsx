@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { motion, useScroll, useTransform, useInView } from 'framer-motion'
+import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { 
   ArrowRight, Palette, Code2, Zap, Shield, Users, 
@@ -202,49 +202,52 @@ export default function Landing() {
           </nav>
 
           {/* Mobile Dropdown Menu */}
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="lg:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-white/10 shadow-2xl"
-            >
-              <div className="px-4 py-6 space-y-4">
-                <Link 
-                  to="/dashboard" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-base text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all font-medium"
-                  style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
-                >
-                  Dashboard
-                </Link>
-                <a 
-                  href="#features" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-base text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all font-medium"
-                  style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
-                >
-                  Features
-                </a>
-                <Link 
-                  to="/pricing" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-base text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all font-medium"
-                  style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
-                >
-                  Pricing
-                </Link>
-                <Link 
-                  to="/contact" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-base text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all font-medium"
-                  style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
-                >
-                  Contact
-                </Link>
-              </div>
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="lg:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-white/10 shadow-2xl overflow-hidden z-40"
+              >
+                <div className="px-4 py-6 space-y-2">
+                  <Link 
+                    to="/dashboard" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-3 text-base text-gray-300 hover:text-white hover:bg-emerald-500/10 rounded-lg transition-all font-medium"
+                    style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                  >
+                    Dashboard
+                  </Link>
+                  <a 
+                    href="#features" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-3 text-base text-gray-300 hover:text-white hover:bg-emerald-500/10 rounded-lg transition-all font-medium"
+                    style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                  >
+                    Features
+                  </a>
+                  <Link 
+                    to="/pricing" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-3 text-base text-gray-300 hover:text-white hover:bg-emerald-500/10 rounded-lg transition-all font-medium"
+                    style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                  >
+                    Pricing
+                  </Link>
+                  <Link 
+                    to="/contact" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-3 text-base text-gray-300 hover:text-white hover:bg-emerald-500/10 rounded-lg transition-all font-medium"
+                    style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                  >
+                    Contact
+                  </Link>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </motion.header>
 
