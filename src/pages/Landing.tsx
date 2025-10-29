@@ -150,11 +150,11 @@ export default function Landing() {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
         
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="py-4 sm:py-5 flex items-center justify-between relative">
-            {/* Mobile: Hamburger Menu Button (Left of center) */}
+          <nav className="py-4 sm:py-5 flex items-center relative">
+            {/* Mobile: Hamburger Menu Button (Far Left) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors"
+              className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors z-20"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? (
@@ -181,7 +181,7 @@ export default function Landing() {
             </div>
 
             {/* Mobile: Draftly Logo - Centered */}
-            <Link to="/" className="lg:hidden absolute left-1/2 -translate-x-1/2 group">
+            <Link to="/" className="lg:hidden absolute left-1/2 -translate-x-1/2 group z-10">
               <span className="text-xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                 Draftly
               </span>
@@ -191,7 +191,7 @@ export default function Landing() {
             {user && (
               <button
                 onClick={() => navigate('/profile')}
-                className="group ml-auto lg:absolute lg:right-0"
+                className="group ml-auto lg:absolute lg:right-0 z-20"
               >
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity" />
                 <div className="relative w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border border-white/10">
