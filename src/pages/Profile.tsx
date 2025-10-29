@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { User, Mail, Briefcase, LogOut, Sparkles, Calendar, Shield, Zap, Crown, CheckCircle } from 'lucide-react'
 import { auth, db, doc, getDoc, signOut } from '../firebase'
+import Header from '../components/Header'
 
 export default function Profile() {
   const [userData, setUserData] = useState<any>(null)
@@ -110,25 +111,7 @@ export default function Profile() {
       </div>
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/10">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
-        
-        <div className="max-w-6xl mx-auto px-6 sm:px-8">
-          <nav className="py-5 flex items-center justify-center gap-8" style={{ marginLeft: '-20px' }}>
-            <Link to="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Dashboard</Link>
-            <Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Contact</Link>
-
-            <Link to="/" className="group mx-4">
-              <span className="text-xl sm:text-2xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                Draftly
-              </span>
-            </Link>
-
-            <a href="/#features" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Features</a>
-            <Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Pricing</Link>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="relative z-10 pt-32 pb-20 px-4 sm:px-6">
