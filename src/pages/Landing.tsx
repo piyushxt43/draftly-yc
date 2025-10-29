@@ -115,23 +115,23 @@ export default function Landing() {
           }}
         />
         
-        {/* Very subtle orb - top (with parallax) */}
+        {/* Very subtle orb - top (with parallax) - Responsive sizing */}
         <motion.div 
-          className="absolute top-0 left-1/2 w-[800px] h-[400px] rounded-full"
+          className="absolute top-0 left-1/2 w-[300px] sm:w-[500px] lg:w-[800px] h-[200px] sm:h-[300px] lg:h-[400px] rounded-full"
           style={{
             background: 'radial-gradient(circle, rgba(16, 185, 129, 0.03) 0%, transparent 70%)',
-            filter: 'blur(80px)',
+            filter: 'blur(60px)',
             x: '-50%',
             y: y1
           }}
         />
         
-        {/* Very subtle orb - bottom (with parallax) */}
+        {/* Very subtle orb - bottom (with parallax) - Responsive sizing */}
         <motion.div 
-          className="absolute bottom-0 left-1/2 w-[800px] h-[400px] rounded-full"
+          className="absolute bottom-0 left-1/2 w-[300px] sm:w-[500px] lg:w-[800px] h-[200px] sm:h-[300px] lg:h-[400px] rounded-full"
           style={{
             background: 'radial-gradient(circle, rgba(20, 184, 166, 0.02) 0%, transparent 70%)',
-            filter: 'blur(80px)',
+            filter: 'blur(60px)',
             x: '-50%',
             y: y2
           }}
@@ -147,37 +147,37 @@ export default function Landing() {
       >
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
         
-        <div className="max-w-6xl mx-auto px-6 sm:px-8">
-          <nav className="py-5 flex items-center justify-center gap-8 relative" style={{ marginLeft: '-20px' }}>
-            {/* Dashboard, Contact */}
-            <Link to="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Dashboard</Link>
-            <Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Contact</Link>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="py-4 sm:py-5 flex items-center justify-between sm:justify-center gap-2 sm:gap-4 md:gap-6 lg:gap-8 relative">
+            {/* Mobile: Dashboard hidden, Desktop: visible */}
+            <Link to="/dashboard" className="hidden sm:block text-xs sm:text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Dashboard</Link>
+            <Link to="/contact" className="text-xs sm:text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Contact</Link>
 
             {/* Draftly Logo */}
-            <Link to="/" className="group mx-4">
-              <span className="text-xl sm:text-2xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+            <Link to="/" className="group mx-1 sm:mx-2 md:mx-4">
+              <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                 Draftly
               </span>
             </Link>
 
             {/* Features, Pricing */}
-            <a href="#features" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Features</a>
-            <Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Pricing</Link>
+            <a href="#features" className="hidden sm:block text-xs sm:text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Features</a>
+            <Link to="/pricing" className="text-xs sm:text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Pricing</Link>
             
             {/* Profile Icon (only when logged in) - Far Right */}
             {user && (
               <button
                 onClick={() => navigate('/profile')}
-                className="group absolute right-0"
+                className="group ml-auto sm:absolute sm:right-0"
               >
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity" />
-                <div className="relative w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border border-white/10">
-                  <UserIcon className="w-5 h-5 text-white" strokeWidth={2.5} />
-          </div>
+                <div className="relative w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border border-white/10">
+                  <UserIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.5} />
+                </div>
               </button>
             )}
           </nav>
-          </div>
+        </div>
       </motion.header>
 
       {/* Hero Section - Premium Design */}
@@ -257,11 +257,11 @@ export default function Landing() {
               initial={{ opacity: 0, y: 30 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.7, duration: 0.7, type: "spring", stiffness: 100 }}
-              className="w-full max-w-4xl relative px-6"
+              className="w-full max-w-4xl relative px-4 sm:px-6"
             >
-              {/* B2B Value Props - Top Left (Further from chat) */}
+              {/* B2B Value Props - Top Left - Hidden on mobile, visible on large screens */}
               <motion.div 
-                className="absolute -top-32 -left-16 sm:-left-40 lg:-left-64 xl:-left-96"
+                className="hidden lg:block absolute -top-32 lg:-left-32 xl:-left-48"
                 initial={{ opacity: 0, x: -20, rotate: -12 }}
                 animate={{ opacity: 1, x: 0, rotate: 6 }}
                 whileHover={{ rotate: 12, scale: 1.05 }}
@@ -276,9 +276,9 @@ export default function Landing() {
                 </div>
               </motion.div>
 
-              {/* B2B Value Props - Top Right (Further from chat) */}
+              {/* B2B Value Props - Top Right - Hidden on mobile, visible on large screens */}
               <motion.div 
-                className="absolute -top-32 -right-16 sm:-right-40 lg:-right-64 xl:-right-96"
+                className="hidden lg:block absolute -top-32 lg:-right-32 xl:-right-48"
                 initial={{ opacity: 0, x: 20, rotate: 12 }}
                 animate={{ opacity: 1, x: 0, rotate: -6 }}
                 whileHover={{ rotate: -12, scale: 1.05 }}
@@ -293,9 +293,9 @@ export default function Landing() {
                 </div>
               </motion.div>
 
-              {/* Floating Icon Cards Around Chat */}
+              {/* Floating Icon Cards Around Chat - Only on extra large screens */}
               <motion.div 
-                className="absolute -left-40 lg:-left-64 xl:-left-96 top-4 hidden xl:block"
+                className="absolute -left-32 xl:-left-48 top-4 hidden xl:block"
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 1.0 }}
