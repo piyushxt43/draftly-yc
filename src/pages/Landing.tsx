@@ -7,7 +7,8 @@ import {
   Layers, Layout, Smartphone, Monitor,
   TrendingUp, Award, CheckCircle, Heart,
   Wand2, Send, Paperclip, Building2, Briefcase, 
-  Target, Headphones, BarChart3, Activity, User as UserIcon
+  Target, Headphones, BarChart3, Activity, User as UserIcon,
+  Menu, X
 } from 'lucide-react'
 import { auth, db, doc, getDoc } from '../firebase'
 import AuthModal from '../components/AuthModal'
@@ -32,6 +33,7 @@ export default function Landing() {
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [user, setUser] = useState<any>(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const navigate = useNavigate()
 
   const { scrollY } = useScroll()
@@ -148,35 +150,101 @@ export default function Landing() {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
         
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="py-4 sm:py-5 flex items-center justify-between sm:justify-center gap-2 sm:gap-4 md:gap-6 lg:gap-8 relative">
-            {/* Mobile: Dashboard hidden, Desktop: visible */}
-            <Link to="/dashboard" className="hidden sm:block text-xs sm:text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Dashboard</Link>
-            <Link to="/contact" className="text-xs sm:text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Contact</Link>
+          <nav className="py-4 sm:py-5 flex items-center justify-between relative">
+            {/* Mobile: Hamburger Menu Button (Left of center) */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
 
-            {/* Draftly Logo */}
-            <Link to="/" className="group mx-1 sm:mx-2 md:mx-4">
-              <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+            {/* Desktop Navigation - Hidden on mobile */}
+            <div className="hidden lg:flex items-center justify-center gap-8 flex-1">
+              <Link to="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Dashboard</Link>
+              <Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Contact</Link>
+
+              {/* Draftly Logo - Desktop */}
+              <Link to="/" className="group mx-4">
+                <span className="text-2xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                  Draftly
+                </span>
+              </Link>
+
+              <a href="#features" className="text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Features</a>
+              <Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Pricing</Link>
+            </div>
+
+            {/* Mobile: Draftly Logo - Centered */}
+            <Link to="/" className="lg:hidden absolute left-1/2 -translate-x-1/2 group">
+              <span className="text-xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                 Draftly
               </span>
             </Link>
-
-            {/* Features, Pricing */}
-            <a href="#features" className="hidden sm:block text-xs sm:text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Features</a>
-            <Link to="/pricing" className="text-xs sm:text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Pricing</Link>
             
-            {/* Profile Icon (only when logged in) - Far Right */}
+            {/* Profile Icon (only when logged in) - Far Right (Both mobile & desktop) */}
             {user && (
               <button
                 onClick={() => navigate('/profile')}
-                className="group ml-auto sm:absolute sm:right-0"
+                className="group ml-auto lg:absolute lg:right-0"
               >
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity" />
-                <div className="relative w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border border-white/10">
-                  <UserIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.5} />
+                <div className="relative w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border border-white/10">
+                  <UserIcon className="w-5 h-5 text-white" strokeWidth={2.5} />
                 </div>
               </button>
             )}
           </nav>
+
+          {/* Mobile Dropdown Menu */}
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="lg:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-white/10 shadow-2xl"
+            >
+              <div className="px-4 py-6 space-y-4">
+                <Link 
+                  to="/dashboard" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-base text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all font-medium"
+                  style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                >
+                  Dashboard
+                </Link>
+                <a 
+                  href="#features" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-base text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all font-medium"
+                  style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                >
+                  Features
+                </a>
+                <Link 
+                  to="/pricing" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-base text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all font-medium"
+                  style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                >
+                  Pricing
+                </Link>
+                <Link 
+                  to="/contact" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-base text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all font-medium"
+                  style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                >
+                  Contact
+                </Link>
+              </div>
+            </motion.div>
+          )}
         </div>
       </motion.header>
 
