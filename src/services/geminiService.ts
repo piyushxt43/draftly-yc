@@ -1,7 +1,14 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Use Google Gemini API from environment variable
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+console.log('🔑 Gemini API Key loaded:', apiKey ? `${apiKey.substring(0, 10)}...` : 'NOT FOUND');
+
+if (!apiKey) {
+  console.error('❌ VITE_GEMINI_API_KEY is not set! Please check your .env file and restart the dev server.');
+}
+
+const genAI = new GoogleGenerativeAI(apiKey || '');
 
 // Callback for progress updates
 type ProgressCallback = (progress: number, message: string) => void;
