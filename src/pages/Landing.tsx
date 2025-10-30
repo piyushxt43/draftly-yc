@@ -560,7 +560,7 @@ export default function Landing() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.8 }}
-              className="mt-16 flex flex-col items-center relative z-30"
+              className="mt-24 flex flex-col items-center relative z-30"
             >
               <div className="flex items-center gap-2 mb-8">
                 <div className="w-8 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
@@ -569,7 +569,7 @@ export default function Landing() {
                 </p>
                 <div className="w-8 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
               </div>
-              <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-x-12 gap-y-6">
                 {[
                   { name: 'SaaS Companies', icon: Globe, color: 'from-blue-400 to-cyan-400' },
                   { name: 'Digital Agencies', icon: Users, color: 'from-purple-400 to-pink-400' },
@@ -582,15 +582,15 @@ export default function Landing() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.9 + idx * 0.1 }}
                     whileHover={{ scale: 1.05, y: -2 }}
-                    className="flex items-center gap-3 text-white hover:text-emerald-400 transition-colors cursor-pointer group px-4 py-2 relative z-30"
+                    className="flex items-center gap-2 sm:gap-3 text-white hover:text-emerald-400 transition-colors cursor-pointer group px-2 sm:px-4 py-2 relative z-30"
                   >
-                    <div className="w-14 h-14 rounded-xl bg-white/5 backdrop-blur-sm flex items-center justify-center border border-white/10 group-hover:border-white/20 group-hover:bg-white/10 transition-all relative overflow-hidden">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/5 backdrop-blur-sm flex items-center justify-center border border-white/10 group-hover:border-white/20 group-hover:bg-white/10 transition-all relative overflow-hidden flex-shrink-0">
                       {React.createElement([Globe, Users, Building2, Rocket][idx], {
-                        className: "w-7 h-7 text-gray-400 group-hover:text-white relative z-10 transition-colors",
+                        className: "w-6 h-6 sm:w-7 sm:h-7 text-gray-400 group-hover:text-white relative z-10 transition-colors",
                         strokeWidth: 1.5
                       })}
                     </div>
-                    <span className="text-sm font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>{company.name}</span>
+                    <span className="text-xs sm:text-sm font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>{company.name}</span>
                   </motion.div>
                 ))}
               </div>
