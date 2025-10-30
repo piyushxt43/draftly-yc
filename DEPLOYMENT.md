@@ -1,150 +1,145 @@
-# Deployment Guide - Draftly
+# 🚀 Draftly Production Deployment Guide
 
-This guide will help you deploy Draftly to Vercel with a custom domain.
+## 📋 Prerequisites
 
-## ✅ Project is Now Deployment-Ready!
+- Node.js 18+ installed
+- Git repository set up
+- Vercel account (free tier works)
+- Firebase project created
+- Google Gemini API key
 
-Your code has been successfully pushed to:
-**https://github.com/piyushxt43/draftly-yc**
+## 🔐 Environment Variables Setup
 
-## 🚀 Deploy to Vercel
+### Local Development
 
-### Step 1: Connect to Vercel
+1. Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
 
-1. Go to [Vercel](https://vercel.com)
-2. Sign in with your GitHub account
-3. Click **"Add New Project"**
-4. Import **piyushxt43/draftly-yc** from your GitHub repositories
+2. Fill in your actual values in `.env`:
+```
+VITE_FIREBASE_API_KEY=your_actual_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+VITE_GEMINI_API_KEY=your_gemini_api_key
+```
 
-### Step 2: Configure Project
+### Vercel Production Deployment
 
-Vercel will auto-detect the settings, but verify:
+1. **Push to Git** (ensure .env is NOT committed):
+```bash
+git add .
+git commit -m "Production ready deployment"
+git push origin main
+```
 
-- **Framework Preset**: Vite
+2. **Deploy to Vercel**:
+   - Go to [vercel.com](https://vercel.com)
+   - Click "Add New Project"
+   - Import your Git repository
+   - Configure environment variables in Vercel dashboard:
+     - Go to Project Settings → Environment Variables
+     - Add all variables from `.env.example` with your actual values
+     - Set for: Production, Preview, and Development
+
+3. **Add Custom Domain** (optional):
+   - Go to Project Settings → Domains
+   - Add your custom domain
+   - Follow DNS configuration instructions
+
+## 🛠️ Build Commands
+
+Vercel will automatically detect these settings:
+
+- **Framework**: Vite
 - **Build Command**: `npm run build`
 - **Output Directory**: `dist`
 - **Install Command**: `npm install`
 
-### Step 3: Deploy
+## ✅ Pre-Deployment Checklist
 
-1. Click **"Deploy"**
-2. Wait 2-3 minutes for the build to complete
-3. Your site will be live at `https://draftly-yc.vercel.app`
+- [x] All API keys moved to environment variables
+- [x] `.env` added to `.gitignore`
+- [x] `.env.example` created for reference
+- [x] Firebase configuration using env vars
+- [x] Gemini API using env vars
+- [x] No sensitive data in source code
+- [x] All dependencies in `package.json`
+- [x] Build command tested locally
 
-### Step 4: Add Custom Domain
+## 🔒 Security Notes
 
-1. In your Vercel project dashboard, go to **Settings** → **Domains**
-2. Add your custom domain (e.g., `draftly.com`)
-3. Follow the DNS configuration instructions:
-   - For root domain: Add `A` record pointing to Vercel's IP
-   - For subdomain: Add `CNAME` record pointing to `cname.vercel-dns.com`
-4. Wait for DNS propagation (5-30 minutes)
+**NEVER commit these files:**
+- `.env`
+- `.env.local`
+- `.env.production`
 
-## 📋 Vercel Configuration
+**Safe to commit:**
+- `.env.example` (with placeholder values)
+- All source code files
+- `package.json` and `package-lock.json`
 
-Your project includes a `vercel.json` file with:
+## 🧪 Test Build Locally
 
-```json
-{
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
-  "framework": "vite",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
-}
+Before deploying, test the production build:
+
+```bash
+npm run build
+npm run preview
 ```
 
-This ensures:
-- ✅ React Router works correctly
-- ✅ All routes redirect to `index.html`
-- ✅ Custom domain support
-- ✅ Automatic HTTPS
+## 📦 What's Deployed
 
-## 🔧 Environment Variables
+- ✅ React + TypeScript frontend
+- ✅ Firebase Authentication
+- ✅ Firestore Database
+- ✅ Google Gemini AI integration
+- ✅ LoremFlickr image API
+- ✅ Responsive UI with Tailwind CSS
+- ✅ Framer Motion animations
+- ✅ UI generation & download features
 
-No environment variables needed for basic deployment!
+## 🌐 After Deployment
 
-## 🌐 Custom Domain DNS Settings
+1. Update Firebase authorized domains:
+   - Go to Firebase Console → Authentication → Settings
+   - Add your Vercel domain (e.g., `your-app.vercel.app`)
 
-### For Root Domain (example.com)
-
-Add these DNS records in your domain provider:
-
-**A Record:**
-- Name: `@`
-- Value: `76.76.21.21`
-
-### For Subdomain (www.example.com)
-
-**CNAME Record:**
-- Name: `www`
-- Value: `cname.vercel-dns.com`
-
-## ✨ Features Included
-
-- ✅ Fully responsive design
-- ✅ Smooth scroll animations
-- ✅ Parallax effects
-- ✅ Page transitions
-- ✅ SEO-friendly routing
-- ✅ Production-optimized build
-- ✅ Fast loading times
-- ✅ Mobile-first approach
-
-## 📱 Testing Your Deployment
-
-After deployment, test:
-
-1. **Homepage**: All animations and scroll effects work
-2. **Navigation**: All pages load correctly
-3. **Contact Form**: Redirects work properly
-4. **Mobile View**: Responsive on all screen sizes
-5. **Performance**: Fast load times
-
-## 🔄 Continuous Deployment
-
-Once connected to Vercel:
-
-- Every push to `main` branch automatically deploys
-- Pull request previews are generated automatically
-- Rollback to previous deployments anytime
-
-## 🎯 Production Checklist
-
-- [x] Code pushed to GitHub
-- [x] Vercel configuration added
-- [x] Build command verified
-- [x] Router configuration set
-- [x] .gitignore configured
-- [x] README documentation added
+2. Test all features:
+   - User authentication (Email & Google)
+   - UI generation
+   - File downloads
+   - Responsive design
 
 ## 🆘 Troubleshooting
 
-### Build Fails
-- Check that all dependencies are in `package.json`
-- Ensure TypeScript errors are fixed
-- Verify Node version (use Node 18+)
+**Build fails:**
+- Check all environment variables are set in Vercel
+- Ensure Node.js version is 18+
+- Clear build cache in Vercel
 
-### Routes Don't Work
-- The `vercel.json` rewrites are configured
-- All routes redirect to `/index.html`
+**Firebase errors:**
+- Add Vercel domain to Firebase authorized domains
+- Check Firebase API keys are correct
+- Verify Firebase project is active
 
-### Custom Domain Issues
-- Wait 5-30 minutes for DNS propagation
-- Verify DNS records are correct
-- Use [DNS Checker](https://dnschecker.org) to verify
+**UI generation not working:**
+- Verify Gemini API key is set correctly
+- Check API quota/billing in Google Cloud Console
+- Review browser console for errors
 
 ## 📞 Support
 
-For issues, contact: piyushsingh123443@gmail.com
+For issues, check:
+- Vercel deployment logs
+- Browser developer console
+- Firebase Console → Analytics
 
 ---
 
-**Ready to deploy!** 🚀
-
+**Ready to deploy!** 🎉

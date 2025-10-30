@@ -47,7 +47,12 @@ export default function Header() {
 
             {/* Draftly Logo - Desktop */}
             <Link to="/" className="group mx-4 flex items-center gap-2">
-              <img src="/logo.png" alt="Draftly" className="w-8 h-8 object-contain group-hover:scale-110 transition-transform" />
+              <img 
+                src="/logo.png" 
+                alt="Draftly" 
+                className="w-8 h-8 object-contain group-hover:scale-110 transition-transform" 
+                onError={(e) => { e.currentTarget.style.display = 'none' }}
+              />
               <span className="text-2xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                 Draftly
               </span>
@@ -57,9 +62,14 @@ export default function Header() {
             <Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors font-medium whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Pricing</Link>
           </div>
 
-          {/* Mobile: Draftly Logo - Centered */}
-          <Link to="/" className="lg:hidden absolute left-1/2 -translate-x-1/2 group z-10 pointer-events-auto flex items-center gap-1.5">
-            <img src="/logo.png" alt="Draftly" className="w-6 h-6 object-contain group-hover:scale-110 transition-transform" />
+          {/* Mobile: Draftly Logo - Slightly Right of Center */}
+          <Link to="/" className="lg:hidden absolute left-1/2 group z-10 pointer-events-auto flex items-center gap-1.5" style={{ transform: 'translateX(-40%)' }}>
+            <img 
+              src="/logo.png" 
+              alt="Draftly" 
+              className="w-6 h-6 object-contain group-hover:scale-110 transition-transform" 
+              onError={(e) => { e.currentTarget.style.display = 'none' }}
+            />
             <span className="text-xl font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
               Draftly
             </span>

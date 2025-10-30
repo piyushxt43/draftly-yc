@@ -7,12 +7,15 @@ import {
   Layers, Layout, Smartphone, Monitor,
   TrendingUp, Award, CheckCircle, Heart,
   Wand2, Send, Paperclip, Building2, Briefcase, 
-  Target, Headphones, BarChart3, Activity, User as UserIcon
+  Target, Headphones, BarChart3, Activity, User as UserIcon,
+  Download, X, Loader, Eye
 } from 'lucide-react'
 import { auth, db, doc, getDoc } from '../firebase'
 import AuthModal from '../components/AuthModal'
 import OnboardingFlow from '../components/OnboardingFlow'
 import Header from '../components/Header'
+import { generateUI, enhancePrompt } from '../services/geminiService'
+import { downloadAsZip, downloadHTML, downloadAsText } from '../utils/downloadHelper'
 
 const chatPlaceholders = [
   "Design a modern SaaS landing page...",
@@ -34,6 +37,14 @@ export default function Landing() {
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [user, setUser] = useState<any>(null)
   const navigate = useNavigate()
+  
+  // UI Generation states
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [generatedHTML, setGeneratedHTML] = useState<string>('')
+  const [showPreview, setShowPreview] = useState(false)
+  const [error, setError] = useState<string>('')
+  const [progress, setProgress] = useState(0)
+  const [progressMessage, setProgressMessage] = useState('')
 
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 1000], [0, 200])
@@ -45,10 +56,15 @@ export default function Landing() {
       if (currentUser) {
         setUser(currentUser)
         // Check if user has completed onboarding
-        const docRef = doc(db, 'users', currentUser.uid)
-        const docSnap = await getDoc(docRef)
-        if (!docSnap.exists() || !docSnap.data().onboarded) {
-          setShowOnboarding(true)
+        try {
+          const docRef = doc(db, 'users', currentUser.uid)
+          const docSnap = await getDoc(docRef)
+          if (!docSnap.exists() || !docSnap.data().onboarded) {
+            setShowOnboarding(true)
+          }
+        } catch (error) {
+          // Firestore offline or connection error - just skip onboarding check
+          console.log('⚠️ Firestore unavailable, skipping onboarding check');
         }
       } else {
         setUser(null)
@@ -81,6 +97,77 @@ export default function Landing() {
 
     return () => clearInterval(typingInterval)
   }, [placeholderIndex])
+
+  // Handle UI Generation
+  const handleGenerateUI = async () => {
+    // Check if user is logged in
+    if (!user) {
+      setShowAuthModal(true)
+      return
+    }
+
+    if (!chatInput.trim()) {
+      setError('Please enter a prompt to generate UI')
+      return
+    }
+
+    setIsGenerating(true)
+    setError('')
+    setProgress(0)
+    setProgressMessage('Starting...')
+
+    try {
+      // Enhance the prompt for better results
+      const enhancedPrompt = enhancePrompt(chatInput)
+      
+      // Generate UI using Gemini with progress callback
+      const result = await generateUI(enhancedPrompt, (prog, msg) => {
+        setProgress(prog)
+        setProgressMessage(msg)
+      })
+
+      if (result.success && result.html) {
+        setGeneratedHTML(result.html)
+        setShowPreview(true)
+        setProgress(100)
+        setProgressMessage('Complete!')
+      } else {
+        setError(result.error || 'Failed to generate UI')
+        setProgress(0)
+      }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while generating UI')
+      setProgress(0)
+    } finally {
+      setTimeout(() => {
+        setIsGenerating(false)
+        setProgress(0)
+        setProgressMessage('')
+      }, 1000)
+    }
+  }
+
+  // Handle download
+  const handleDownloadZip = async () => {
+    if (!generatedHTML) return
+    
+    const filename = chatInput.trim().slice(0, 30).replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'draftly-ui'
+    await downloadAsZip(generatedHTML, filename)
+  }
+
+  const handleDownloadHTML = () => {
+    if (!generatedHTML) return
+    
+    const filename = chatInput.trim().slice(0, 30).replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'draftly-ui'
+    downloadHTML(generatedHTML, `${filename}.html`)
+  }
+
+  const handleDownloadText = () => {
+    if (!generatedHTML) return
+    
+    const filename = chatInput.trim().slice(0, 30).replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'draftly-ui'
+    downloadAsText(generatedHTML, `${filename}-code.txt`)
+  }
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
@@ -149,7 +236,7 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.6 }} 
-            className="flex flex-col items-center space-y-10"
+            className="flex flex-col items-center space-y-5"
           >
             {/* Premium Badge - Perfectly Centered */}
             <motion.div 
@@ -179,8 +266,8 @@ export default function Landing() {
             </motion.h1>
 
             {/* Value Proposition - Clear & Concise */}
-            <motion.div 
-              className="max-w-4xl text-center px-4 w-full space-y-4"
+            <motion.div
+              className="max-w-4xl text-center px-4 w-full -mt-2"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.6 }}
@@ -188,27 +275,24 @@ export default function Landing() {
               <p className="text-base sm:text-lg text-emerald-400 font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
                 For frontend teams shipping <span className="font-bold">10x better</span>
               </p>
-              <p className="text-sm sm:text-base text-gray-400" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
-                <span className="line-through text-white">$50,000 design budget</span> → <span className="text-emerald-400 font-bold">$50 with Draftly</span>
-              </p>
             </motion.div>
 
-            {/* Join Waitlist Button - Centered Below Tagline */}
+            {/* Try Now Button - Centered Below Tagline - Bigger */}
             {!user && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className="flex items-center justify-center"
+                className="flex items-center justify-center -mt-1"
               >
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="group relative px-6 py-2.5 bg-white/5 backdrop-blur-sm border border-emerald-500/30 rounded-full hover:border-emerald-500/60 transition-all overflow-hidden"
+                  className="group relative px-8 py-3.5 bg-white/5 backdrop-blur-sm border border-emerald-500/30 rounded-full hover:border-emerald-500/60 transition-all overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <span className="relative text-sm text-emerald-400 font-semibold flex items-center gap-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                    Join Waitlist
-                    <Sparkles className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
+                  <span className="relative text-base text-emerald-400 font-semibold flex items-center gap-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                    Try Now
+                    <Sparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
                   </span>
                 </button>
               </motion.div>
@@ -219,7 +303,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 30 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.7, duration: 0.7, type: "spring", stiffness: 100 }}
-              className="w-full max-w-4xl relative px-4 sm:px-6"
+              className="w-full max-w-4xl relative px-4 sm:px-6 -mt-2"
             >
               {/* B2B Value Props - Top Left - Hidden on mobile, visible on large screens */}
               <motion.div 
@@ -335,31 +419,75 @@ export default function Landing() {
                   <textarea
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        handleGenerateUI()
+                      }
+                    }}
                     placeholder={displayedText + (isTyping ? '|' : '')}
                     className="w-full bg-transparent text-white placeholder-gray-500 px-5 py-4 resize-none focus:outline-none text-base"
                     rows={2}
                     style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
+                    disabled={isGenerating}
                   />
-                  <div className="flex items-center justify-between px-3 py-2 border-t border-white/5">
-                    <div className="flex items-center gap-2">
-                      <button className="p-2 rounded-lg hover:bg-white/5 transition-colors">
-                        <Plus className="w-4 h-4 text-gray-600" />
-                      </button>
-                      <Link to="/contact" className="px-3 py-1.5 text-xs bg-white/5 hover:bg-white/10 rounded-md transition-colors flex items-center gap-1.5 text-gray-500">
-                        <Upload className="w-3 h-3" />
-                        <span style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Attach</span>
-                      </Link>
-                      <div className="px-3 py-1.5 text-xs bg-emerald-500/10 rounded-md text-emerald-400">
-                        <span style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Public</span>
+                  
+                  {/* Error Message */}
+                  {error && !isGenerating && (
+                    <div className="px-5 py-2 bg-red-500/10 border-t border-red-500/20">
+                      <p className="text-xs text-red-400" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                        {error}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Progress Indicator */}
+                  {isGenerating && (
+                    <div className="px-5 py-3 bg-emerald-500/5 border-t border-emerald-500/20">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs text-emerald-400 font-medium" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                          {progressMessage}
+                        </p>
+                        <span className="text-xs text-emerald-400 font-bold" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>
+                          {progress}%
+                        </span>
+                      </div>
+                      <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <motion.div
+                          className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"
+                          initial={{ width: '0%' }}
+                          animate={{ width: `${progress}%` }}
+                          transition={{ duration: 0.3, ease: 'easeOut' }}
+                        />
                       </div>
                     </div>
+                  )}
+                  
+                  <div className="flex items-center justify-between px-3 py-2 border-t border-white/5">
                     <div className="flex items-center gap-2">
-                      <button className="p-2 rounded-lg hover:bg-white/5 transition-colors">
-                        <Mic className="w-4 h-4 text-gray-600" />
+                      {user ? (
+                        <div className="px-3 py-1.5 text-xs bg-emerald-500/10 rounded-md text-emerald-400 flex items-center gap-1.5">
+                          <CheckCircle className="w-3 h-3" />
+                          <span style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Logged In</span>
+                        </div>
+                      ) : (
+                        <div className="px-3 py-1.5 text-xs bg-gray-500/10 rounded-md text-gray-400">
+                          <span style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>Login to Generate</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={handleGenerateUI}
+                        disabled={isGenerating || !chatInput.trim()}
+                        className="p-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg hover:from-emerald-500 hover:to-teal-500 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed group"
+                      >
+                        {isGenerating ? (
+                          <Loader className="w-4 h-4 text-white animate-spin" />
+                        ) : (
+                          <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-0.5 transition-transform" />
+                        )}
                       </button>
-                      <Link to="/contact" className="p-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg hover:from-emerald-500 hover:to-teal-500 transition-all shadow-lg shadow-emerald-500/20">
-                        <ArrowRight className="w-4 h-4 text-white" />
-                      </Link>
                     </div>
                   </div>
                 </div>
@@ -373,11 +501,11 @@ export default function Landing() {
                 className="mt-6 flex flex-wrap items-center justify-center gap-2"
               >
                 {[
-                  { icon: Palette, text: "Landing Page", color: "from-purple-500 to-pink-500" },
-                  { icon: Layout, text: "Dashboard", color: "from-blue-500 to-cyan-500" },
-                  { icon: Smartphone, text: "Mobile App", color: "from-green-500 to-emerald-500" },
-                  { icon: Code2, text: "Component", color: "from-orange-500 to-red-500" }
-                ].map((prompt, idx) => (
+                  { icon: Palette, text: "Landing Page", color: "from-purple-500 to-pink-500", prompt: "Create a stunning SaaS landing page with hero section, features, pricing, and testimonials" },
+                  { icon: Layout, text: "Dashboard", color: "from-blue-500 to-cyan-500", prompt: "Build a modern dashboard with sidebar navigation, stats cards, and data visualization" },
+                  { icon: Smartphone, text: "Mobile App", color: "from-green-500 to-emerald-500", prompt: "Design a mobile-first app interface with bottom navigation and smooth animations" },
+                  { icon: Code2, text: "Component", color: "from-orange-500 to-red-500", prompt: "Generate a beautiful contact form with validation and modern styling" }
+                ].map((promptItem, idx) => (
                   <motion.div
                     key={idx}
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -385,15 +513,15 @@ export default function Landing() {
                     transition={{ delay: 0.7 + idx * 0.1 }}
                     whileHover={{ scale: 1.05, y: -2 }}
                   >
-                    <Link 
-                      to="/contact"
+                    <button
+                      onClick={() => setChatInput(promptItem.prompt)}
                       className="group px-4 py-2 text-xs bg-white/5 hover:bg-white/10 border border-white/5 hover:border-emerald-500/30 rounded-lg text-gray-400 hover:text-white transition-all flex items-center gap-2 relative overflow-hidden"
                       style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}
                     >
-                      <div className={`absolute inset-0 bg-gradient-to-r ${prompt.color} opacity-0 group-hover:opacity-10 transition-opacity`} />
-                      <prompt.icon className="w-4 h-4 relative z-10" />
-                      <span className="relative z-10">{prompt.text}</span>
-                    </Link>
+                      <div className={`absolute inset-0 bg-gradient-to-r ${promptItem.color} opacity-0 group-hover:opacity-10 transition-opacity`} />
+                      <promptItem.icon className="w-4 h-4 relative z-10" />
+                      <span className="relative z-10">{promptItem.text}</span>
+                    </button>
                   </motion.div>
                 ))}
               </motion.div>
@@ -768,6 +896,116 @@ export default function Landing() {
           }}
         />
       )}
+
+      {/* Preview Modal */}
+      <AnimatePresence>
+        {showPreview && generatedHTML && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowPreview(false)}
+              className="fixed inset-0 bg-black/95 backdrop-blur-md z-[100]"
+            />
+
+            {/* Modal */}
+            <div className="fixed inset-0 flex items-center justify-center z-[101] p-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="relative w-full max-w-7xl h-[90vh] bg-gradient-to-b from-zinc-900 to-black border border-white/10 rounded-2xl shadow-2xl flex flex-col"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b border-white/10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
+                      <Eye className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                        Generated UI Preview
+                      </h2>
+                      <p className="text-xs text-gray-400" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                        Created by Draftly AI
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleDownloadText}
+                      className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white transition-all flex items-center gap-2"
+                      style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                    >
+                      <Download className="w-4 h-4" />
+                      Code (.txt)
+                    </button>
+                    <button
+                      onClick={handleDownloadHTML}
+                      className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white transition-all flex items-center gap-2"
+                      style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                    >
+                      <Download className="w-4 h-4" />
+                      HTML
+                    </button>
+                    <button
+                      onClick={handleDownloadZip}
+                      className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg text-sm text-white font-semibold transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20"
+                      style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                    >
+                      <Download className="w-4 h-4" />
+                      ZIP (All Files)
+                    </button>
+                    <button
+                      onClick={() => setShowPreview(false)}
+                      className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    >
+                      <X className="w-5 h-5 text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Preview Content */}
+                <div className="flex-1 p-6 overflow-hidden">
+                  <iframe
+                    srcDoc={generatedHTML}
+                    className="w-full h-full bg-white rounded-lg border border-white/10"
+                    title="UI Preview"
+                    sandbox="allow-scripts allow-same-origin"
+                  />
+                </div>
+
+                {/* Footer */}
+                <div className="p-4 border-t border-white/10 bg-white/5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-emerald-400" />
+                      <p className="text-xs text-gray-400" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                        Generated from: <span className="text-white">{chatInput.slice(0, 80)}...</span>
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setShowPreview(false)
+                        setChatInput('')
+                        setGeneratedHTML('')
+                      }}
+                      className="text-xs text-gray-400 hover:text-white transition-colors"
+                      style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                    >
+                      Generate Another
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
