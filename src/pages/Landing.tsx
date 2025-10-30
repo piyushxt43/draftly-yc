@@ -385,33 +385,6 @@ export default function Landing() {
                 </div>
               </motion.div>
 
-              {/* Bottom Cards - B2B Focused */}
-              <motion.div 
-                className="absolute -bottom-24 left-8 sm:left-32 lg:left-48 xl:left-72 hidden sm:block"
-                initial={{ opacity: 0, y: 10, rotate: -8 }}
-                animate={{ opacity: 1, y: 0, rotate: 3 }}
-                whileHover={{ rotate: 8, scale: 1.05 }}
-                transition={{ delay: 1.4 }}
-              >
-                <div className="bg-gradient-to-br from-emerald-500/5 to-teal-500/5 rounded-xl border border-emerald-500/20 px-3 py-2 backdrop-blur-sm flex items-center gap-2 shadow-lg cursor-pointer">
-                  <Shield className="w-4 h-4 text-emerald-400" />
-                  <span className="text-xs text-gray-400" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>SOC 2 Compliant</span>
-                </div>
-              </motion.div>
-
-              <motion.div 
-                className="absolute -bottom-24 right-8 sm:right-32 lg:right-48 xl:right-72 hidden sm:block"
-                initial={{ opacity: 0, y: 10, rotate: 8 }}
-                animate={{ opacity: 1, y: 0, rotate: -3 }}
-                whileHover={{ rotate: -8, scale: 1.05 }}
-                transition={{ delay: 1.5 }}
-              >
-                <div className="bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-xl border border-purple-500/20 px-3 py-2 backdrop-blur-sm flex items-center gap-2 shadow-lg cursor-pointer">
-                  <Zap className="w-4 h-4 text-purple-400" />
-                  <span className="text-xs text-gray-400" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>99.9% Uptime</span>
-                </div>
-              </motion.div>
-
               {/* Chat input - Centered */}
               <div className="relative bg-[#18181b] rounded-2xl border border-white/10 p-1 shadow-2xl hover:border-emerald-500/30 transition-all">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-1000" />
@@ -525,42 +498,14 @@ export default function Landing() {
                   </motion.div>
                 ))}
               </motion.div>
-
-              {/* B2B Trust Indicators Below Chat - Centered */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.6 }}
-                className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-16 w-full"
-              >
-                {[
-                  { icon: CheckCircle, label: 'Instant Deploy', color: 'emerald', gradient: 'from-emerald-500 to-teal-500' },
-                  { icon: Shield, label: 'Enterprise Security', color: 'blue', gradient: 'from-blue-500 to-cyan-500' },
-                  { icon: Star, label: 'Custom Branding', color: 'purple', gradient: 'from-purple-500 to-pink-500' },
-                  { icon: Globe, label: 'Global CDN', color: 'orange', gradient: 'from-orange-500 to-red-500' }
-                ].map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.7 + idx * 0.1 }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    className="relative bg-white/5 border border-white/10 rounded-xl px-3 py-4 flex flex-col items-center text-center hover:border-emerald-500/30 transition-all group overflow-hidden cursor-pointer"
-                  >
-                    <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
-                    <item.icon className={`w-6 h-6 text-${item.color}-400 mb-2 group-hover:scale-110 transition-transform relative z-10`} />
-                    <span className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors relative z-10" style={{ fontFamily: 'Space Grotesk, system-ui, sans-serif' }}>{item.label}</span>
-                  </motion.div>
-                ))}
-              </motion.div>
             </motion.div>
 
             {/* Social Proof Section - B2B */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1.8 }}
-              className="mt-40 flex flex-col items-center relative z-10"
+              transition={{ delay: 1.6 }}
+              className="mt-20 flex flex-col items-center relative z-10"
             >
               <div className="flex items-center gap-2 mb-8">
                 <div className="w-8 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
