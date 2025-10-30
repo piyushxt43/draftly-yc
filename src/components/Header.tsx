@@ -81,7 +81,7 @@ export default function Header() {
               onClick={() => navigate('/profile')}
               className="group ml-auto lg:absolute lg:right-0 z-20 flex-shrink-0"
             >
-              <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity pointer-events-none" />
+              <div className="hidden sm:block absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity pointer-events-none" />
               <div className="relative w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center border border-white/10">
                 <UserIcon className="w-5 h-5 text-white" strokeWidth={2.5} />
               </div>
