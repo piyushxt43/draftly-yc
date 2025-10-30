@@ -11,13 +11,7 @@ You need to add these environment variables to Vercel:
 3. Add these variables one by one:
 
 ```
-VITE_FIREBASE_API_KEY=AIzaSyDQTD9SHIJ9BMnauJ2cJevIVxYxtuWJJaY
-VITE_FIREBASE_AUTH_DOMAIN=draflty.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=draflty
-VITE_FIREBASE_STORAGE_BUCKET=draflty.firebasestorage.app
-VITE_FIREBASE_MESSAGING_SENDER_ID=999469134861
-VITE_FIREBASE_APP_ID=1:999469134861:web:207bd3ee83fee13bd6d144
-VITE_FIREBASE_MEASUREMENT_ID=G-P6S60N1JV1
+
 ```
 
 4. Make sure to select **Production**, **Preview**, and **Development** for each variable
