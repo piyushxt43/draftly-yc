@@ -41,7 +41,7 @@ export default async function handler(req: any, res: any) {
 
     // The prompt from client already includes MASTER_SYSTEM_PROMPT with all detailed instructions
     // including the critical CSS texture background requirements, so we use it directly
-    const systemPrompt = "You are an elite UI/UX designer. You MUST return COMPLETE, FULL HTML websites with ALL 7-8 sections. NEVER truncate or summarize. Output the ENTIRE HTML code from <!DOCTYPE html> to </html>. Minimum 5000 characters. Include 20+ images with LoremFlickr URLs. The <body> tag MUST use ONLY CSS texture patterns from the 20 provided options - NO background images allowed! Make a COMPLETE, WORKING website!";
+    const systemPrompt = "You are an elite UI/UX designer. You MUST return COMPLETE, FULL HTML websites with ALL 7-8 sections. NEVER truncate or summarize. Output the ENTIRE HTML code from <!DOCTYPE html> to </html>. Minimum 5000 characters. Include 20+ images with LoremFlickr URLs. 🚨🚨🚨 CRITICAL: The <body> tag MUST use ONLY CSS texture patterns from the 20 provided options - ABSOLUTELY NO background images (no url(https://...), no url(https://loremflickr.com/...), no url(https://unsplash.com/...))! Use ONLY CSS gradients or SVG data URIs for <body> background! Make a COMPLETE, WORKING website!";
 
     // Call Gemini API
     // Note: prompt already contains MASTER_SYSTEM_PROMPT with all detailed instructions

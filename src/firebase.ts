@@ -26,8 +26,16 @@ enableIndexedDbPersistence(db).catch((err) => {
     console.warn('⚠️ Multiple tabs open, persistence can only be enabled in one tab at a time.');
   } else if (err.code === 'unimplemented') {
     console.warn('⚠️ Browser doesn\'t support offline persistence.');
+  } else {
+    // Silently ignore other persistence errors (network issues, etc.)
+    console.debug('Firestore persistence setup skipped:', err.code);
   }
 });
+
+// Check Firebase configuration
+if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+  console.error('❌ Firebase configuration missing! Check environment variables in Vercel.');
+}
 
 export { auth, db, googleProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, doc, setDoc, getDoc };
 

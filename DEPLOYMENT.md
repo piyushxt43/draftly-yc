@@ -19,7 +19,10 @@ cp .env.example .env
 
 2. Fill in your actual values in `.env`:
 ```
-# Client-side (VITE_ prefix - exposed in browser, safe for Firebase)
+# ============================================
+# FIREBASE CONFIGURATION (Client-Side)
+# Get from: Firebase Console → Project Settings → Your apps → Web app
+# ============================================
 VITE_FIREBASE_API_KEY=your_actual_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your_project_id
@@ -28,9 +31,26 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
 VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
 
-# Server-side (NO VITE_ prefix - NOT exposed to client, SECURE!)
-# This is for the /api/generate-ui endpoint
+# ============================================
+# GEMINI API KEY (Server-Side - SECURE!)
+# Get from: https://aistudio.google.com/apikey
+# IMPORTANT: NO VITE_ prefix - this is server-side only
+# ============================================
 GEMINI_API_KEY=your_gemini_api_key
+```
+
+**📋 Quick Copy-Paste for Vercel:**
+
+Copy all these variable names (replace values with your actual keys):
+```
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_FIREBASE_MEASUREMENT_ID=
+GEMINI_API_KEY=
 ```
 
 ### Vercel Production Deployment

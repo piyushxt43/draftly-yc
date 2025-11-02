@@ -1032,8 +1032,8 @@ function postProcessHTML(html: string, userPrompt: string): string {
     console.warn('⚠️ Warning: Less than 8 images generated. This should not happen!');
   }
   
-  // 11. 🚨 CRITICAL: Remove background images from <body> tag and replace with CSS texture
-  console.log('🔒 Ensuring <body> uses CSS texture only (no background images)...');
+  // 11. 🚨 CRITICAL: Remove ALL background images and enforce CSS texture ONLY
+  console.log('🔒 Aggressively removing ALL background images and enforcing CSS texture...');
   
   // List of 20 CSS texture patterns (pick one randomly)
   const texturePatterns = [
@@ -1062,26 +1062,65 @@ function postProcessHTML(html: string, userPrompt: string): string {
   // Pick a random texture
   const randomTexture = texturePatterns[Math.floor(Math.random() * texturePatterns.length)];
   
-  // Remove any background-image URLs from <body> tag (loremflickr, unsplash, etc.)
+  // AGGRESSIVE REMOVAL: Remove ALL background images from <body> tag (any format)
   processed = processed.replace(
-    /<body([^>]*)\sstyle=["']([^"']*background[^"']*url\([^)]+\)[^"']*)["']/gi,
+    /<body([^>]*)\sstyle=["']([^"']*)["']/gi,
     (match, attributes, style) => {
-      // Remove background-image with URLs, keep other styles, add CSS texture
-      const cleanedStyle = style.replace(/background[^;]*url\([^)]+\)[^;]*;?/gi, '');
-      return `<body${attributes} style="${cleanedStyle} background-color: #000000; ${randomTexture}"`;
+      // Remove ALL background properties that use external URLs (http://, https://, loremflickr, unsplash, etc.)
+      let cleanedStyle = style
+        .replace(/background[^:]*:\s*url\(['"]?https?:\/\/[^'")]+['"]?\)[^;]*;?/gi, '')
+        .replace(/background[^:]*:\s*url\(['"]?https:\/\/loremflickr[^'")]+['"]?\)[^;]*;?/gi, '')
+        .replace(/background[^:]*:\s*url\(['"]?https:\/\/source\.unsplash[^'")]+['"]?\)[^;]*;?/gi, '')
+        .replace(/background[^:]*:\s*url\(['"]?https:\/\/images\.unsplash[^'")]+['"]?\)[^;]*;?/gi, '')
+        .replace(/background[^:]*:\s*url\(['"]?https:\/\/picsum[^'")]+['"]?\)[^;]*;?/gi, '');
+      
+      // Remove background shorthand that includes URLs
+      cleanedStyle = cleanedStyle.replace(/background:\s*[^;]*url\(['"]?https?:\/\/[^'")]+['"]?\)[^;]*;?/gi, '');
+      
+      // Clean up extra spaces and semicolons
+      cleanedStyle = cleanedStyle.replace(/;\s*;/g, ';').replace(/^\s*;\s*/, '').replace(/\s*;\s*$/, '');
+      
+      // Add CSS texture (always, to ensure it's there)
+      if (cleanedStyle.trim()) {
+        return `<body${attributes} style="${cleanedStyle}; background-color: #000000; ${randomTexture}">`;
+      } else {
+        return `<body${attributes} style="background-color: #000000; ${randomTexture}">`;
+      }
     }
   );
   
-  // Also check for body tags without proper background texture
-  if (!processed.match(/<body[^>]*style=["'][^"']*background-image[^"']*(?:gradient|url\(data:)/i)) {
-    // Add texture if body doesn't have one
-    processed = processed.replace(
-      /<body([^>]*)>/i,
-      `<body$1 style="background-color: #000000; ${randomTexture}">`
-    );
-  }
+  // Also handle body tags without style attribute - add texture
+  processed = processed.replace(
+    /<body([^>]*?)(?:\sstyle=["'][^"']*["'])?([^>]*)>/i,
+    (match, before, after) => {
+      // Check if style already exists with proper texture
+      if (match.includes('background-image') && (match.includes('gradient') || match.includes('url(data:'))) {
+        return match; // Already has texture
+      }
+      // Add texture
+      return `<body${before}${after} style="background-color: #000000; ${randomTexture}">`;
+    }
+  );
   
-  console.log('✅ Body background texture enforced!');
+  // Remove background images from hero sections that might act as page backgrounds
+  processed = processed.replace(
+    /<section([^>]*)\sclass=["'][^"']*hero[^"']*["'][^>]*\sstyle=["']([^"']*background[^"']*url\(https?:\/\/[^'")]+\)[^"']*)["']/gi,
+    (match, attributes, style) => {
+      const cleanedStyle = style.replace(/background[^;]*url\(https?:\/\/[^'")]+\)[^;]*;?/gi, '');
+      return `<section${attributes} class="hero" style="${cleanedStyle}">`;
+    }
+  );
+  
+  // Remove background images from full-width divs that might act as backgrounds
+  processed = processed.replace(
+    /<div([^>]*)\s(?:class=["'][^"']*(?:hero|background|bg)[^"']*["']|style=["'][^"']*)([^>]*)\sstyle=["']([^"']*background[^"']*url\(https?:\/\/[^'")]+\)[^"']*)["'][^>]*>/gi,
+    (match, before, middle, style) => {
+      const cleanedStyle = style.replace(/background[^;]*url\(https?:\/\/[^'")]+\)[^;]*;?/gi, '');
+      return `<div${before}${middle} style="${cleanedStyle}">`;
+    }
+  );
+  
+  console.log('✅ ALL background images removed, CSS texture enforced on <body>!');
   
   return processed;
 }
