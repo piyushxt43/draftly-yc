@@ -19,6 +19,7 @@ cp .env.example .env
 
 2. Fill in your actual values in `.env`:
 ```
+# Client-side (VITE_ prefix - exposed in browser, safe for Firebase)
 VITE_FIREBASE_API_KEY=your_actual_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your_project_id
@@ -26,7 +27,10 @@ VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
 VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
-VITE_GEMINI_API_KEY=your_gemini_api_key
+
+# Server-side (NO VITE_ prefix - NOT exposed to client, SECURE!)
+# This is for the /api/generate-ui endpoint
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
 ### Vercel Production Deployment
@@ -44,8 +48,11 @@ git push origin main
    - Import your Git repository
    - Configure environment variables in Vercel dashboard:
      - Go to Project Settings → Environment Variables
-     - Add all variables from `.env.example` with your actual values
+     - **IMPORTANT:** Add both client-side AND server-side variables:
+       - **Client-side** (VITE_ prefix): VITE_FIREBASE_*, etc.
+       - **Server-side** (NO prefix): `GEMINI_API_KEY` (this is SECURE, not exposed to clients!)
      - Set for: Production, Preview, and Development
+     - ⚠️ **SECURITY:** Never add `VITE_GEMINI_API_KEY` - use `GEMINI_API_KEY` instead!
 
 3. **Add Custom Domain** (optional):
    - Go to Project Settings → Domains
@@ -129,9 +136,15 @@ npm run preview
 - Verify Firebase project is active
 
 **UI generation not working:**
-- Verify Gemini API key is set correctly
+- Verify `GEMINI_API_KEY` (NOT `VITE_GEMINI_API_KEY`) is set in Vercel environment variables
+- Check that `/api/generate-ui` endpoint is accessible
 - Check API quota/billing in Google Cloud Console
 - Review browser console for errors
+- Check Vercel function logs for server-side errors
+
+**API key security:**
+- ✅ `GEMINI_API_KEY` - Server-side only (secure, used in `/api/generate-ui`)
+- ❌ `VITE_GEMINI_API_KEY` - DO NOT USE (would expose key to clients)
 
 ## 📞 Support
 
