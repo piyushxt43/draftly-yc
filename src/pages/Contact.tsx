@@ -152,7 +152,7 @@ export default function Contact() {
                     label: 'LinkedIn',
                     title: 'Connect Professionally',
                     value: 'Join our network',
-                    href: 'https://linkedin.com',
+                    href: 'https://www.linkedin.com/in/piyush-singh-023507359?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app',
                     gradient: 'from-blue-500 via-cyan-500 to-blue-600',
                   },
                   {
@@ -160,7 +160,7 @@ export default function Contact() {
                     label: 'Instagram',
                     title: 'Follow Our Work',
                     value: 'Design inspiration daily',
-                    href: 'https://instagram.com',
+                    href: 'https://www.instagram.com/piyush.glitch?igsh=N2pxeG1hYzVpNTgz',
                     gradient: 'from-pink-500 via-purple-500 to-pink-600',
                   }
                 ].map((social, idx) => (
