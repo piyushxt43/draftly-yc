@@ -118,16 +118,20 @@ export default async function handler(req: any, res: any) {
    - Background color: pure black (#000000) with texture overlay
    - ABSOLUTELY NO background images (no url(https://...), no loremflickr, no unsplash in backgrounds!)
 
-3. HEADER/NAVIGATION (Glassmorphism):
-   - Fixed position at top (z-index: 1000)
-   - background: rgba(0, 0, 0, 0.7)
-   - backdrop-filter: blur(24px) saturate(180%)
-   - -webkit-backdrop-filter: blur(24px) saturate(180%)
-   - border-bottom: 1px solid rgba(255, 255, 255, 0.08)
-   - Padding: 1rem 2rem (mobile: 1rem)
-   - Smooth transitions (0.3s ease)
-   - Logo/name on left, nav items on right (space-between)
-   - Mobile: hamburger menu with smooth slide-in
+3. HEADER/NAVIGATION (CRITICAL - Must be EXCELLENT):
+   - Fixed position at top (z-index: 1000), width: 100%
+   - Premium glassmorphism: background: rgba(0, 0, 0, 0.75), backdrop-filter: blur(32px) saturate(180%), -webkit-backdrop-filter: blur(32px) saturate(180%)
+   - Subtle border-bottom: 1px solid rgba(255, 255, 255, 0.1)
+   - Padding: 1.25rem 2.5rem (mobile: 1rem 1.5rem)
+   - Layout: Flexbox with justify-between, items-center
+   - Logo/Brand: Left side, prominent (font-size: 1.5rem, font-weight: 700), use accent color for brand name
+   - Navigation Links: Right side, horizontal on desktop (gap: 2rem), clean typography (font-size: 0.95rem, font-weight: 500)
+   - Nav items: Smooth hover effects (color change to accent, transform: translateY(-2px))
+   - CTA Button: Prominent button in nav (accent background, rounded-lg, px-6 py-2.5, font-weight: 600)
+   - Mobile: Hamburger menu icon (3 lines), slide-in menu from right with backdrop, full-height overlay
+   - Smooth transitions: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+   - Shadow: subtle box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3)
+   - MUST look premium and professional - this is the first thing users see!
 
 4. MOBILE RESPONSIVENESS (CRITICAL):
    - Use mobile-first approach with proper breakpoints:
@@ -189,12 +193,23 @@ export default async function handler(req: any, res: any) {
    - Focus: ring-2 ring-accent ring-offset-2 ring-offset-black
    - Disabled: opacity-50, cursor-not-allowed
 
-10. IMAGES:
-    - Use LoremFlickr ONLY for content images (not backgrounds): https://loremflickr.com/800/600/[keyword]
-    - All images: loading="lazy", alt="descriptive text", width and height attributes
-    - Responsive: max-w-full, h-auto
-    - Rounded corners: rounded-lg or rounded-xl
-    - Object-fit: cover for hero images, contain for logos
+10. IMAGES (MANDATORY - Use Images EVERYWHERE):
+    - CRITICAL: You MUST include images in Gallery, Testimonials, Features, Hero sections, and Portfolio sections
+    - Use free image APIs with relevant keywords based on user prompt:
+      * LoremFlickr: https://loremflickr.com/WIDTH/HEIGHT/keyword1,keyword2 (e.g., https://loremflickr.com/800/600/business,technology)
+      * Unsplash Source: https://source.unsplash.com/WIDTHxHEIGHT/?keyword (e.g., https://source.unsplash.com/800x600/?business)
+      * Picsum: https://picsum.photos/WIDTH/HEIGHT (for generic images)
+    - Extract keywords from user prompt to make images relevant (e.g., "SaaS landing page" → use "business,technology,startup")
+    - Gallery Section: MUST have 6-12 images in a responsive grid (2 columns mobile, 3-4 desktop)
+    - Testimonials: Each testimonial card MUST have a profile image (use https://loremflickr.com/100/100/portrait,person or https://i.pravatar.cc/150?img=1-12)
+    - Features Section: Each feature card should have an icon OR a small image (400x300)
+    - Hero Section: Large hero image (1200x600) if appropriate for the design
+    - Portfolio/Showcase: 4-8 project images with hover effects
+    - All images: loading="lazy", alt="descriptive text", width and height attributes, class="rounded-lg" or "rounded-xl"
+    - Responsive: max-w-full, h-auto, object-fit: cover
+    - Image sizes: Hero (1200x600), Gallery (800x600), Cards (600x400), Avatars (100x100)
+    - Add hover effects: transform: scale(1.05), transition: all 0.3s ease
+    - DO NOT use placeholder text or empty image tags - ALWAYS include actual image URLs
 
 11. ANIMATIONS (Subtle & Professional):
     - Fade-in on scroll: opacity 0 → 1, transform: translateY(20px) → 0
@@ -203,15 +218,17 @@ export default async function handler(req: any, res: any) {
     - NO excessive bouncing, spinning, or distracting animations
     - Use CSS animations, not JavaScript (unless necessary)
 
-12. SECTIONS TO INCLUDE:
-    - Hero: Large, impactful, clear CTA, proper spacing
-    - Features: 3-6 feature cards in responsive grid
-    - Stats/Numbers: Visual emphasis, large numbers
-    - Gallery/Showcase: Grid of images or cards
-    - Testimonials: Quote cards with author info
-    - Pricing: Clean pricing cards (if applicable)
-    - Contact/CTA: Clear call-to-action section
-    - Footer: Links, copyright, minimal design
+12. SECTIONS TO INCLUDE (All with Images):
+    - Hero: Large, impactful section with hero image (1200x600), clear headline, subheadline, CTA buttons, proper spacing (py-24 sm:py-32 md:py-40)
+    - Features: 3-6 feature cards in responsive grid, EACH card MUST have an image (600x400) or icon, title, description
+    - Stats/Numbers: Visual emphasis with large numbers, icons or small images, animated counters
+    - Gallery/Showcase: MANDATORY - Grid of 6-12 images (800x600), responsive (2 cols mobile, 3-4 desktop), hover effects, use relevant keywords from user prompt
+    - Testimonials: MANDATORY - 3-6 testimonial cards, EACH MUST have: profile image (100x100 from pravatar.cc or loremflickr), name, role, company, quote, star rating
+    - Portfolio/Projects: If applicable, 4-8 project cards with images (800x600), title, description, tags
+    - Pricing: Clean pricing cards (if applicable), with icons or small images
+    - Contact/CTA: Clear call-to-action section with background image or gradient
+    - Footer: Links, copyright, minimal design, social icons
+    - REMEMBER: Every section that can have images SHOULD have images - make it visually rich!
 
 13. CODE QUALITY:
     - Semantic HTML5 (header, nav, main, section, article, footer)
@@ -239,7 +256,16 @@ export default async function handler(req: any, res: any) {
 
 ${colorInstruction}${fontInstruction}
 
-Create a stunning, professional website that looks like it was designed by a top-tier agency. Focus on precision, alignment, spacing, and creating a cohesive, polished user experience that works flawlessly on all devices.`;
+=== CRITICAL REMINDERS ===
+- HEADER IS THE FIRST IMPRESSION - Make it absolutely stunning with perfect glassmorphism, smooth animations, and professional layout
+- IMAGES ARE MANDATORY - Use them in Gallery (6-12 images), Testimonials (profile pics), Features (card images), Hero (hero image)
+- Extract keywords from user prompt to make images relevant (e.g., "e-commerce" → use "shopping,store,products")
+- Use free APIs: LoremFlickr, Unsplash Source, Picsum, or Pravatar for avatars
+- Every testimonial MUST have a profile image
+- Gallery section MUST exist with multiple images in a grid
+- Make the design visually rich and engaging - images make websites look professional and complete
+
+Create a stunning, professional website that looks like it was designed by a top-tier agency. The header must be exceptional, images must be used throughout (gallery, testimonials, features), and the overall design should be visually rich and engaging. Focus on precision, alignment, spacing, and creating a cohesive, polished user experience that works flawlessly on all devices.`;
 
     // Call Gemini API with fallback for rate limits
     // Note: prompt already contains MASTER_SYSTEM_PROMPT with all detailed instructions

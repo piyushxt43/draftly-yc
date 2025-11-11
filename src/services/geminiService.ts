@@ -85,16 +85,20 @@ function buildSystemPrompt(userColors?: string, userFonts?: string): string {
    - Background color: pure black (#000000) with texture overlay
    - ABSOLUTELY NO background images (no url(https://...), no loremflickr, no unsplash in backgrounds!)
 
-3. HEADER/NAVIGATION (Glassmorphism):
-   - Fixed position at top (z-index: 1000)
-   - background: rgba(0, 0, 0, 0.7)
-   - backdrop-filter: blur(24px) saturate(180%)
-   - -webkit-backdrop-filter: blur(24px) saturate(180%)
-   - border-bottom: 1px solid rgba(255, 255, 255, 0.08)
-   - Padding: 1rem 2rem (mobile: 1rem)
-   - Smooth transitions (0.3s ease)
-   - Logo/name on left, nav items on right (space-between)
-   - Mobile: hamburger menu with smooth slide-in
+3. HEADER/NAVIGATION (CRITICAL - Must be EXCELLENT):
+   - Fixed position at top (z-index: 1000), width: 100%
+   - Premium glassmorphism: background: rgba(0, 0, 0, 0.75), backdrop-filter: blur(32px) saturate(180%), -webkit-backdrop-filter: blur(32px) saturate(180%)
+   - Subtle border-bottom: 1px solid rgba(255, 255, 255, 0.1)
+   - Padding: 1.25rem 2.5rem (mobile: 1rem 1.5rem)
+   - Layout: Flexbox with justify-between, items-center
+   - Logo/Brand: Left side, prominent (font-size: 1.5rem, font-weight: 700), use accent color for brand name
+   - Navigation Links: Right side, horizontal on desktop (gap: 2rem), clean typography (font-size: 0.95rem, font-weight: 500)
+   - Nav items: Smooth hover effects (color change to accent, transform: translateY(-2px))
+   - CTA Button: Prominent button in nav (accent background, rounded-lg, px-6 py-2.5, font-weight: 600)
+   - Mobile: Hamburger menu icon (3 lines), slide-in menu from right with backdrop, full-height overlay
+   - Smooth transitions: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+   - Shadow: subtle box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3)
+   - MUST look premium and professional - this is the first thing users see!
 
 4. MOBILE RESPONSIVENESS (CRITICAL):
    - Use mobile-first approach with proper breakpoints:
@@ -156,12 +160,23 @@ function buildSystemPrompt(userColors?: string, userFonts?: string): string {
    - Focus: ring-2 ring-accent ring-offset-2 ring-offset-black
    - Disabled: opacity-50, cursor-not-allowed
 
-10. IMAGES:
-    - Use LoremFlickr ONLY for content images (not backgrounds): https://loremflickr.com/800/600/[keyword]
-    - All images: loading="lazy", alt="descriptive text", width and height attributes
-    - Responsive: max-w-full, h-auto
-    - Rounded corners: rounded-lg or rounded-xl
-    - Object-fit: cover for hero images, contain for logos
+10. IMAGES (MANDATORY - Use Images EVERYWHERE):
+    - CRITICAL: You MUST include images in Gallery, Testimonials, Features, Hero sections, and Portfolio sections
+    - Use free image APIs with relevant keywords based on user prompt:
+      * LoremFlickr: https://loremflickr.com/WIDTH/HEIGHT/keyword1,keyword2 (e.g., https://loremflickr.com/800/600/business,technology)
+      * Unsplash Source: https://source.unsplash.com/WIDTHxHEIGHT/?keyword (e.g., https://source.unsplash.com/800x600/?business)
+      * Picsum: https://picsum.photos/WIDTH/HEIGHT (for generic images)
+    - Extract keywords from user prompt to make images relevant (e.g., "SaaS landing page" → use "business,technology,startup")
+    - Gallery Section: MUST have 6-12 images in a responsive grid (2 columns mobile, 3-4 desktop)
+    - Testimonials: Each testimonial card MUST have a profile image (use https://loremflickr.com/100/100/portrait,person or https://i.pravatar.cc/150?img=1-12)
+    - Features Section: Each feature card should have an icon OR a small image (400x300)
+    - Hero Section: Large hero image (1200x600) if appropriate for the design
+    - Portfolio/Showcase: 4-8 project images with hover effects
+    - All images: loading="lazy", alt="descriptive text", width and height attributes, class="rounded-lg" or "rounded-xl"
+    - Responsive: max-w-full, h-auto, object-fit: cover
+    - Image sizes: Hero (1200x600), Gallery (800x600), Cards (600x400), Avatars (100x100)
+    - Add hover effects: transform: scale(1.05), transition: all 0.3s ease
+    - DO NOT use placeholder text or empty image tags - ALWAYS include actual image URLs
 
 11. ANIMATIONS (Subtle & Professional):
     - Fade-in on scroll: opacity 0 → 1, transform: translateY(20px) → 0
@@ -170,15 +185,17 @@ function buildSystemPrompt(userColors?: string, userFonts?: string): string {
     - NO excessive bouncing, spinning, or distracting animations
     - Use CSS animations, not JavaScript (unless necessary)
 
-12. SECTIONS TO INCLUDE:
-    - Hero: Large, impactful, clear CTA, proper spacing
-    - Features: 3-6 feature cards in responsive grid
-    - Stats/Numbers: Visual emphasis, large numbers
-    - Gallery/Showcase: Grid of images or cards
-    - Testimonials: Quote cards with author info
-    - Pricing: Clean pricing cards (if applicable)
-    - Contact/CTA: Clear call-to-action section
-    - Footer: Links, copyright, minimal design
+12. SECTIONS TO INCLUDE (All with Images):
+    - Hero: Large, impactful section with hero image (1200x600), clear headline, subheadline, CTA buttons, proper spacing (py-24 sm:py-32 md:py-40)
+    - Features: 3-6 feature cards in responsive grid, EACH card MUST have an image (600x400) or icon, title, description
+    - Stats/Numbers: Visual emphasis with large numbers, icons or small images, animated counters
+    - Gallery/Showcase: MANDATORY - Grid of 6-12 images (800x600), responsive (2 cols mobile, 3-4 desktop), hover effects, use relevant keywords from user prompt
+    - Testimonials: MANDATORY - 3-6 testimonial cards, EACH MUST have: profile image (100x100 from pravatar.cc or loremflickr), name, role, company, quote, star rating
+    - Portfolio/Projects: If applicable, 4-8 project cards with images (800x600), title, description, tags
+    - Pricing: Clean pricing cards (if applicable), with icons or small images
+    - Contact/CTA: Clear call-to-action section with background image or gradient
+    - Footer: Links, copyright, minimal design, social icons
+    - REMEMBER: Every section that can have images SHOULD have images - make it visually rich!
 
 13. CODE QUALITY:
     - Semantic HTML5 (header, nav, main, section, article, footer)
@@ -206,7 +223,16 @@ function buildSystemPrompt(userColors?: string, userFonts?: string): string {
 
 ${colorInstruction}${fontInstruction}
 
-Create a stunning, professional website that looks like it was designed by a top-tier agency. Focus on precision, alignment, spacing, and creating a cohesive, polished user experience that works flawlessly on all devices.`;
+=== CRITICAL REMINDERS ===
+- HEADER IS THE FIRST IMPRESSION - Make it absolutely stunning with perfect glassmorphism, smooth animations, and professional layout
+- IMAGES ARE MANDATORY - Use them in Gallery (6-12 images), Testimonials (profile pics), Features (card images), Hero (hero image)
+- Extract keywords from user prompt to make images relevant (e.g., "e-commerce" → use "shopping,store,products")
+- Use free APIs: LoremFlickr, Unsplash Source, Picsum, or Pravatar for avatars
+- Every testimonial MUST have a profile image
+- Gallery section MUST exist with multiple images in a grid
+- Make the design visually rich and engaging - images make websites look professional and complete
+
+Create a stunning, professional website that looks like it was designed by a top-tier agency. The header must be exceptional, images must be used throughout (gallery, testimonials, features), and the overall design should be visually rich and engaging. Focus on precision, alignment, spacing, and creating a cohesive, polished user experience that works flawlessly on all devices.`;
 }
 
 interface GenerationResult {
@@ -368,82 +394,119 @@ function extractHTMLFromResponse(response: string): string {
 function postProcessHTML(html: string, userPrompt: string): string {
   let processed = html;
   
-  // Just use generic keywords - let AI figure out relevant images
-  const mainKeyword = 'business';
-  const secondKeyword = 'modern';
+  // Extract relevant keywords from user prompt for better image selection
+  const extractKeywords = (prompt: string): string[] => {
+    const lowerPrompt = prompt.toLowerCase();
+    const keywords: string[] = [];
+    
+    // Common business/tech keywords
+    if (lowerPrompt.includes('saas') || lowerPrompt.includes('software')) keywords.push('technology', 'business', 'startup');
+    if (lowerPrompt.includes('e-commerce') || lowerPrompt.includes('ecommerce') || lowerPrompt.includes('shop')) keywords.push('shopping', 'store', 'products');
+    if (lowerPrompt.includes('portfolio') || lowerPrompt.includes('design')) keywords.push('design', 'creative', 'art');
+    if (lowerPrompt.includes('restaurant') || lowerPrompt.includes('food')) keywords.push('food', 'restaurant', 'cuisine');
+    if (lowerPrompt.includes('fitness') || lowerPrompt.includes('gym') || lowerPrompt.includes('health')) keywords.push('fitness', 'health', 'gym');
+    if (lowerPrompt.includes('education') || lowerPrompt.includes('school') || lowerPrompt.includes('learning')) keywords.push('education', 'learning', 'school');
+    if (lowerPrompt.includes('travel') || lowerPrompt.includes('tourism')) keywords.push('travel', 'tourism', 'vacation');
+    if (lowerPrompt.includes('real estate') || lowerPrompt.includes('property')) keywords.push('realestate', 'property', 'house');
+    if (lowerPrompt.includes('medical') || lowerPrompt.includes('healthcare') || lowerPrompt.includes('hospital')) keywords.push('medical', 'healthcare', 'hospital');
+    if (lowerPrompt.includes('finance') || lowerPrompt.includes('banking') || lowerPrompt.includes('money')) keywords.push('finance', 'banking', 'money');
+    
+    // Default keywords if none found
+    if (keywords.length === 0) {
+      keywords.push('business', 'modern', 'professional');
+    }
+    
+    return keywords.slice(0, 3); // Use up to 3 keywords
+  };
   
-  console.log('🖼️ Fixing broken images with LoremFlickr URLs');
+  const keywords = extractKeywords(userPrompt);
+  const keywordString = keywords.join(',');
+  const mainKeyword = keywords[0] || 'business';
+  const secondKeyword = keywords[1] || 'modern';
+  
+  console.log(`🖼️ Fixing broken images with relevant keywords: ${keywordString}`);
   
   // 1. Replace ALL base64/data URIs with RELEVANT LoremFlickr images
   processed = processed.replace(
     /src=["']data:image[^"']*["']/gi,
-    `src="https://loremflickr.com/800/600/${mainKeyword},${secondKeyword}"`
+    `src="https://loremflickr.com/800/600/${keywordString}"`
   );
   
   // 2. Replace placeholder services with RELEVANT LoremFlickr images
   processed = processed.replace(
     /src=["']https?:\/\/(placeholder\.com|via\.placeholder\.com|placehold\.it|dummyimage\.com|placeimg\.com)[^"']*["']/gi,
-    `src="https://loremflickr.com/800/600/${mainKeyword}"`
+    `src="https://loremflickr.com/800/600/${keywordString}"`
   );
   
-  // 3. Replace Unsplash with RELEVANT LoremFlickr images
+  // 3. Replace Unsplash with RELEVANT LoremFlickr images (preserve dimensions)
   processed = processed.replace(
     /https:\/\/source\.unsplash\.com\/(\d+)x(\d+)\/\?[^"']*/gi,
-    `https://loremflickr.com/$1/$2/${mainKeyword}`
+    `https://loremflickr.com/$1/$2/${keywordString}`
   );
   
-  // 4. Replace Picsum with RELEVANT LoremFlickr images
+  // 4. Replace Picsum with RELEVANT LoremFlickr (preserve dimensions)
   processed = processed.replace(
     /https:\/\/picsum\.photos\/(\d+)\/(\d+)/gi,
-    `https://loremflickr.com/$1/$2/${mainKeyword}`
+    `https://loremflickr.com/$1/$2/${keywordString}`
   );
   
   // 5. Fix empty or broken src with RELEVANT LoremFlickr
   processed = processed.replace(
     /<img([^>]*)\ssrc=["']["']/gi,
-    `<img$1 src="https://loremflickr.com/600/600/${mainKeyword}"`
+    `<img$1 src="https://loremflickr.com/600/600/${keywordString}"`
   );
   
   // 6. Fix relative paths with RELEVANT LoremFlickr
   processed = processed.replace(
     /src=["']\.\.?\/[^"']*["']/gi,
-    `src="https://loremflickr.com/800/600/${mainKeyword}"`
+    `src="https://loremflickr.com/800/600/${keywordString}"`
   );
   
   // 7. Replace SVG placeholders - keep SVG if it's a real SVG, otherwise replace
   processed = processed.replace(
     /src=["'][^"']*placeholder[^"']*\.svg["']/gi,
-    `src="https://loremflickr.com/200/200/${mainKeyword}"`
+    `src="https://loremflickr.com/200/200/${keywordString}"`
   );
   
   // 8. Find img tags without src and add RELEVANT LoremFlickr
   processed = processed.replace(
     /<img(?![^>]*src=)([^>]*)>/gi,
-    `<img src="https://loremflickr.com/600/600/${mainKeyword}" $1>`
+    `<img src="https://loremflickr.com/600/600/${keywordString}" $1>`
   );
   
-  // 9. Add loading="lazy" to ALL images
+  // 9. Ensure testimonial/profile images use Pravatar for better avatars
+  // Look for small images (likely avatars) and replace with Pravatar
+  processed = processed.replace(
+    /<img([^>]*)\ssrc=["']https:\/\/loremflickr\.com\/100\/100\/[^"']*["']([^>]*)>/gi,
+    (match, before, after) => {
+      // Random avatar number for variety
+      const avatarNum = Math.floor(Math.random() * 70) + 1;
+      return `<img${before} src="https://i.pravatar.cc/150?img=${avatarNum}"${after}>`;
+    }
+  );
+  
+  // 10. Add loading="lazy" to ALL images
   processed = processed.replace(
     /<img(?![^>]*loading=)/gi,
     '<img loading="lazy"'
   );
   
-  // 10. Add alt tags to ALL images
+  // 11. Add alt tags to ALL images
   processed = processed.replace(
     /<img(?![^>]*alt=)/gi,
     '<img alt="Image"'
   );
   
-  // 11. Count images
+  // 12. Count images
   const imageCount = (processed.match(/<img/g) || []).length;
   console.log(`✅ Total images in output: ${imageCount}`);
   
-  // 12. If less than 8 images, warn (but can't add more in post-processing)
+  // 13. If less than 8 images, warn (but can't add more in post-processing)
   if (imageCount < 8) {
     console.warn('⚠️ Warning: Less than 8 images generated. This should not happen!');
   }
   
-  // 13. 🚨 CRITICAL: Remove ALL background images from homepage and enforce CSS texture ONLY
+  // 14. 🚨 CRITICAL: Remove ALL background images from homepage and enforce CSS texture ONLY
   console.log('🔒 Aggressively removing ALL homepage background images and enforcing CSS texture...');
   
   // 13a. Ensure viewport meta tag exists with proper mobile settings
