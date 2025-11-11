@@ -116,34 +116,41 @@ export default function Landing() {
 
   // Handle UI Generation
   const handleGenerateUI = async () => {
-    // Check if user is logged in
-    if (!user) {
-      setShowAuthModal(true)
-      return
-    }
-
     if (!chatInput.trim()) {
       setError('Please enter a prompt to generate UI')
       return
     }
 
-    // Check generation limit (3 free generations)
-    try {
-      const userDocRef = doc(db, 'users', user.uid)
-      const userDocSnap = await getDoc(userDocRef)
-      const userData = userDocSnap.exists() ? userDocSnap.data() : { generationCount: 0, isPro: false }
-      const generationCount = userData.generationCount || 0
-      const isPro = userData.isPro || false
-
-      // Check if user has exceeded free limit and is not pro
-      if (generationCount >= 3 && !isPro) {
-        // User has used all 3 free generations - redirect to pricing page
-        navigate('/pricing')
+    // Check if user is logged in
+    if (!user) {
+      // Check if unauthenticated user has already used their free prompt
+      const hasUsedFreePrompt = localStorage.getItem('draftly_free_prompt_used') === 'true'
+      
+      if (hasUsedFreePrompt) {
+        // User has already used their free prompt - require sign in
+        setShowAuthModal(true)
         return
       }
-    } catch (err) {
-      console.error('Error checking generation limit:', err)
-      // Continue even if error (graceful degradation)
+      // Allow first free prompt for unauthenticated users
+    } else {
+      // User is logged in - check generation limit (3 free generations)
+      try {
+        const userDocRef = doc(db, 'users', user.uid)
+        const userDocSnap = await getDoc(userDocRef)
+        const userData = userDocSnap.exists() ? userDocSnap.data() : { generationCount: 0, isPro: false }
+        const generationCount = userData.generationCount || 0
+        const isPro = userData.isPro || false
+
+        // Check if user has exceeded free limit and is not pro
+        if (generationCount >= 3 && !isPro) {
+          // User has used all 3 free generations - redirect to pricing page
+          navigate('/pricing')
+          return
+        }
+      } catch (err) {
+        console.error('Error checking generation limit:', err)
+        // Continue even if error (graceful degradation)
+      }
     }
 
     setIsGenerating(true)
@@ -159,41 +166,47 @@ export default function Landing() {
       })
 
       if (result.success && result.html) {
-        // Store user prompt and update generation count in database
-        try {
-          const userDocRef = doc(db, 'users', user.uid)
-          const userDocSnap = await getDoc(userDocRef)
-          const userData = userDocSnap.exists() ? userDocSnap.data() : { generationCount: 0 }
-          const currentCount = userData.generationCount || 0
-          
-          // Store the prompt in user's prompts subcollection
+        // If user is not logged in, mark that they've used their free prompt
+        if (!user) {
+          localStorage.setItem('draftly_free_prompt_used', 'true')
+          console.log('✅ Free prompt used - user will need to sign in for next generation')
+        } else {
+          // Store user prompt and update generation count in database
           try {
-            await addDoc(collection(db, 'users', user.uid, 'prompts'), {
-              prompt: chatInput.trim(),
-              timestamp: new Date().toISOString(),
-              htmlGenerated: true,
-              htmlLength: result.html.length
-            })
-            console.log('✅ User prompt saved to Firestore')
-          } catch (promptErr) {
-            console.error('Error saving prompt:', promptErr)
-            // Continue even if prompt saving fails
+            const userDocRef = doc(db, 'users', user.uid)
+            const userDocSnap = await getDoc(userDocRef)
+            const userData = userDocSnap.exists() ? userDocSnap.data() : { generationCount: 0 }
+            const currentCount = userData.generationCount || 0
+            
+            // Store the prompt in user's prompts subcollection
+            try {
+              await addDoc(collection(db, 'users', user.uid, 'prompts'), {
+                prompt: chatInput.trim(),
+                timestamp: new Date().toISOString(),
+                htmlGenerated: true,
+                htmlLength: result.html.length
+              })
+              console.log('✅ User prompt saved to Firestore')
+            } catch (promptErr) {
+              console.error('Error saving prompt:', promptErr)
+              // Continue even if prompt saving fails
+            }
+            
+            // Update user's generation count and last generated timestamp
+            await setDoc(userDocRef, {
+              ...userData,
+              generationCount: currentCount + 1,
+              lastGeneratedAt: new Date().toISOString()
+            }, { merge: true })
+            console.log('✅ Generation count updated')
+            
+            // Update remaining generations display
+            const isPro = userData.isPro || false
+            setRemainingGenerations(isPro ? null : Math.max(0, 3 - (currentCount + 1)))
+          } catch (err) {
+            console.error('Error updating generation count:', err)
+            // Continue even if error
           }
-          
-          // Update user's generation count and last generated timestamp
-          await setDoc(userDocRef, {
-            ...userData,
-            generationCount: currentCount + 1,
-            lastGeneratedAt: new Date().toISOString()
-          }, { merge: true })
-          console.log('✅ Generation count updated')
-          
-          // Update remaining generations display
-          const isPro = userData.isPro || false
-          setRemainingGenerations(isPro ? null : Math.max(0, 3 - (currentCount + 1)))
-        } catch (err) {
-          console.error('Error updating generation count:', err)
-          // Continue even if error
         }
 
         setGeneratedHTML(result.html)
